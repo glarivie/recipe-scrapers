@@ -9,7 +9,7 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
-      "!**/node_modules/**",
+      "!**/node_modules",
       "!**/.temp",
       "!**/dist",
       "!**/test-data"
