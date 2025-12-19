@@ -1,38 +1,102 @@
 import { describe, expect, it } from 'bun:test'
 import * as cheerio from 'cheerio'
+import type { Ingredients } from '@/types/recipe.interface'
 import {
   bestMatch,
+  createIngredientGroup,
+  createIngredientItem,
   groupIngredients,
-  ingredientsToObject,
+  isIngredientGroup,
+  isIngredientItem,
+  isIngredients,
   scoreSentenceSimilarity,
+  stringsToIngredients,
 } from '../ingredients'
 
-describe('ingredientsToObject', () => {
-  it('should convert ingredient list to array', () => {
-    const ingredientsList = new Set(['flour', 'sugar', 'eggs'])
-    const result = ingredientsToObject(ingredientsList)
-    expect(result).toEqual(['flour', 'sugar', 'eggs'])
+/** Helper to get ingredient values from a result */
+function getGroupValues(result: Ingredients, groupName: string): string[] {
+  const group = result.find((g) => g.name === groupName)
+  return group ? group.items.map((i) => i.value) : []
+}
+
+describe('createIngredientItem', () => {
+  it('should create an ingredient item with a generated ID', () => {
+    const item = createIngredientItem('flour')
+    expect(item).toEqual({ value: 'flour' })
+  })
+})
+
+describe('createIngredientGroup', () => {
+  it('should create an ingredient group with a generated ID', () => {
+    const group = createIngredientGroup('Dry Ingredients')
+    expect(group).toEqual({ name: 'Dry Ingredients', items: [] })
   })
 
-  it('should convert ingredient group to object', () => {
-    const ingredientsGroup = new Map([
-      ['dry', new Set(['flour', 'sugar'])],
-      ['wet', new Set(['eggs', 'milk'])],
+  it('should create a group with items', () => {
+    const items = [createIngredientItem('flour'), createIngredientItem('sugar')]
+    const group = createIngredientGroup('Dry Ingredients', items)
+    expect(group.items).toHaveLength(2)
+  })
+})
+
+describe('isIngredientItem', () => {
+  it('should return true for valid ingredient item', () => {
+    expect(isIngredientItem({ value: 'flour' })).toBe(true)
+  })
+
+  it('should return false for invalid values', () => {
+    expect(isIngredientItem(null)).toBe(false)
+    expect(isIngredientItem(undefined)).toBe(false)
+    expect(isIngredientItem('string')).toBe(false)
+    expect(isIngredientItem({ value: null })).toBe(false)
+  })
+})
+
+describe('isIngredientGroup', () => {
+  it('should return true for valid ingredient group', () => {
+    const group = createIngredientGroup('Test', [createIngredientItem('flour')])
+    expect(isIngredientGroup(group)).toBe(true)
+  })
+
+  it('should return false for invalid values', () => {
+    expect(isIngredientGroup(null)).toBe(false)
+    expect(isIngredientGroup({ name: 'Test' })).toBe(false) // missing items
+    expect(isIngredientGroup({ name: 'Test', items: 'invalid' })).toBe(false)
+  })
+})
+
+describe('isIngredients', () => {
+  it('should return true for valid ingredients array', () => {
+    const ingredients = stringsToIngredients(['flour', 'sugar'])
+    expect(isIngredients(ingredients)).toBe(true)
+  })
+
+  it('should return false for invalid values', () => {
+    expect(isIngredients(null)).toBe(false)
+    expect(isIngredients('string')).toBe(false)
+    expect(isIngredients([{ invalid: 'object' }])).toBe(false)
+  })
+})
+
+describe('stringsToIngredients', () => {
+  it('should convert string array to Ingredients with default group', () => {
+    const result = stringsToIngredients(['flour', 'sugar', 'eggs'])
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
+      },
     ])
-    const result = ingredientsToObject(ingredientsGroup)
-    expect(result).toEqual({
-      dry: ['flour', 'sugar'],
-      wet: ['eggs', 'milk'],
-    })
   })
 
-  it('should throw error for invalid ingredient type', () => {
-    const invalidIngredients = ['flour', 'sugar']
-
-    // @ts-expect-error
-    expect(() => ingredientsToObject(invalidIngredients)).toThrow(
-      'Invalid ingredients type',
-    )
+  it('should use custom group name', () => {
+    const result = stringsToIngredients(['flour', 'sugar'], 'Dry Ingredients')
+    expect(result).toEqual([
+      {
+        name: 'Dry Ingredients',
+        items: [{ value: 'flour' }, { value: 'sugar' }],
+      },
+    ])
   })
 })
 
@@ -140,7 +204,7 @@ describe('findSelectors', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['Custom ingredient'])
+    const ingredientsList = ['Custom ingredient']
 
     // Should use custom selectors even when WPRM selectors exist
     const result = groupIngredients(
@@ -150,26 +214,28 @@ describe('findSelectors', () => {
       '.custom-ingredient',
     )
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Custom Group')).toBe(true)
-    expect(groupedResult.has('WPRM Group')).toBe(false)
+    expect(result).toHaveLength(1)
+    expect(result[0].name).toBe('Custom Group')
   })
 })
 
 describe('groupIngredients', () => {
-  it('should return a Set when no grouping selectors are found', () => {
+  it('should return default group when no grouping selectors are found', () => {
     const $ = cheerio.load('<div></div>')
-    const ingredientsList = new Set(['flour', 'sugar', 'eggs'])
+    const ingredientsList = ['flour', 'sugar', 'eggs']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Set)
-    expect(result).toEqual(ingredientsList)
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
+      },
+    ])
   })
 
-  it('should return a Set when selectors are provided but not found in DOM', () => {
+  it('should return default group when selectors are provided but not found in DOM', () => {
     const $ = cheerio.load('<div></div>')
-    const ingredientsList = new Set(['flour', 'sugar', 'eggs'])
+    const ingredientsList = ['flour', 'sugar', 'eggs']
     const result = groupIngredients(
       $,
       ingredientsList,
@@ -177,8 +243,12 @@ describe('groupIngredients', () => {
       '.ingredient',
     )
 
-    expect(result).toBeInstanceOf(Set)
-    expect(result).toEqual(ingredientsList)
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
+      },
+    ])
   })
 
   it('should group ingredients with WPRM selectors', () => {
@@ -192,25 +262,17 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['2 cups flour', '1 cup sugar', '2 eggs'])
+    const ingredientsList = ['2 cups flour', '1 cup sugar', '2 eggs']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Dry Ingredients')).toBe(true)
-    expect(groupedResult.has('Wet Ingredients')).toBe(true)
+    expect(result).toHaveLength(2)
 
-    const dryIngredients = groupedResult.get('Dry Ingredients')
-    const wetIngredients = groupedResult.get('Wet Ingredients')
+    const dryValues = getGroupValues(result, 'Dry Ingredients')
+    const wetValues = getGroupValues(result, 'Wet Ingredients')
 
-    if (dryIngredients) {
-      expect(Array.from(dryIngredients)).toContain('2 cups flour')
-      expect(Array.from(dryIngredients)).toContain('1 cup sugar')
-    }
-
-    if (wetIngredients) {
-      expect(Array.from(wetIngredients)).toContain('2 eggs')
-    }
+    expect(dryValues).toContain('2 cups flour')
+    expect(dryValues).toContain('1 cup sugar')
+    expect(wetValues).toContain('2 eggs')
   })
 
   it('should use custom selectors when provided', () => {
@@ -222,7 +284,7 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['ingredient 1', 'ingredient 2'])
+    const ingredientsList = ['ingredient 1', 'ingredient 2']
     const result = groupIngredients(
       $,
       ingredientsList,
@@ -230,17 +292,15 @@ describe('groupIngredients', () => {
       '.custom-ingredient',
     )
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Custom Group')).toBe(true)
-
-    const customGroup = groupedResult.get('Custom Group')
-    if (customGroup) {
-      expect(Array.from(customGroup)).toEqual(['ingredient 1', 'ingredient 2'])
-    }
+    expect(result).toEqual([
+      {
+        name: 'Custom Group',
+        items: [{ value: 'ingredient 1' }, { value: 'ingredient 2' }],
+      },
+    ])
   })
 
-  it('should throw error when ingredient count mismatch', () => {
+  it('should fall back to ungrouped ingredients when ingredient count mismatch', () => {
     const html = `
       <div>
         <h4 class="wprm-recipe-group-name">Group</h4>
@@ -248,12 +308,17 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    // More ingredients than found
-    const ingredientsList = new Set(['ingredient 1', 'ingredient 2'])
+    // More ingredients than found in HTML
+    const ingredientsList = ['ingredient 1', 'ingredient 2']
 
-    expect(() => groupIngredients($, ingredientsList)).toThrow(
-      'Found 1 grouped ingredients but was expecting to find 2',
-    )
+    // Should fall back to ungrouped ingredients instead of throwing
+    const result = groupIngredients($, ingredientsList)
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'ingredient 1' }, { value: 'ingredient 2' }],
+      },
+    ])
   })
 
   it('should use default heading when heading text is empty', () => {
@@ -264,18 +329,15 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['ingredient 1'])
+    const ingredientsList = ['ingredient 1']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Ingredients')).toBe(true)
-
-    const defaultGroup = groupedResult.get('Ingredients')
-
-    if (defaultGroup) {
-      expect(Array.from(defaultGroup)).toContain('ingredient 1')
-    }
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'ingredient 1' }],
+      },
+    ])
   })
 
   it('should handle ingredients without preceding heading', () => {
@@ -287,14 +349,13 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['ingredient 1', 'ingredient 2'])
+    const ingredientsList = ['ingredient 1', 'ingredient 2']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result
     // Default heading for first ingredient
-    expect(groupedResult.has('Ingredients')).toBe(true)
-    expect(groupedResult.has('Group 1')).toBe(true)
+    const groupNames = result.map((g) => g.name)
+    expect(groupNames).toContain('Ingredients')
+    expect(groupNames).toContain('Group 1')
   })
 
   it('should handle multiple ingredients under same heading', () => {
@@ -307,23 +368,23 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set([
+    const ingredientsList = [
       '2 carrots, diced',
       '1 onion, chopped',
       '3 celery stalks',
-    ])
+    ]
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Vegetables')).toBe(true)
-
-    const vegetables = groupedResult.get('Vegetables')
-
-    if (vegetables) {
-      expect(vegetables.size).toBe(3)
-      expect(vegetables).toEqual(ingredientsList)
-    }
+    expect(result).toEqual([
+      {
+        name: 'Vegetables',
+        items: [
+          { value: '2 carrots, diced' },
+          { value: '1 onion, chopped' },
+          { value: '3 celery stalks' },
+        ],
+      },
+    ])
   })
 
   it('should handle fuzzy matching for similar ingredient text', () => {
@@ -335,17 +396,15 @@ describe('groupIngredients', () => {
     `
     const $ = cheerio.load(html)
     // Note the hyphen difference
-    const ingredientsList = new Set(['2 cups all-purpose flour'])
+    const ingredientsList = ['2 cups all-purpose flour']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Flour')).toBe(true)
-
-    const flour = groupedResult.get('Flour')
-    if (flour) {
-      expect(Array.from(flour)).toContain('2 cups all-purpose flour')
-    }
+    expect(result).toEqual([
+      {
+        name: 'Flour',
+        items: [{ value: '2 cups all-purpose flour' }],
+      },
+    ])
   })
 
   it('should handle nested HTML structure', () => {
@@ -361,12 +420,15 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['1 tbsp soy sauce', '2 tsp sesame oil'])
+    const ingredientsList = ['1 tbsp soy sauce', '2 tsp sesame oil']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Sauce')).toBe(true)
+    expect(result).toEqual([
+      {
+        name: 'Sauce',
+        items: [{ value: '1 tbsp soy sauce' }, { value: '2 tsp sesame oil' }],
+      },
+    ])
   })
 
   it('should handle empty ingredient text gracefully', () => {
@@ -378,7 +440,7 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['real ingredient'])
+    const ingredientsList = ['real ingredient']
 
     // Should handle the empty ingredient element without crashing
     expect(() => groupIngredients($, ingredientsList)).not.toThrow()
@@ -394,18 +456,15 @@ describe('groupIngredients', () => {
       </div>
     `
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['ingredient 1', 'ingredient 2'])
+    const ingredientsList = ['ingredient 1', 'ingredient 2']
     const result = groupIngredients($, ingredientsList)
 
-    expect(result).toBeInstanceOf(Map)
-    const groupedResult = result as Map<string, Set<string>>
-    expect(groupedResult.has('Ingredients')).toBe(true)
-
-    const defaultGroup = groupedResult.get('Ingredients')
-
-    if (defaultGroup) {
-      expect(defaultGroup.size).toBe(2)
-    }
+    expect(result).toEqual([
+      {
+        name: 'Ingredients',
+        items: [{ value: 'ingredient 1' }, { value: 'ingredient 2' }],
+      },
+    ])
   })
 
   it('should handle grouping under both a default heading and a found heading', () => {
@@ -423,17 +482,16 @@ describe('groupIngredients', () => {
     `
 
     const $ = cheerio.load(html)
-    const ingredientsList = new Set(['ingredient 1', 'ingredient 2'])
-    const groupedResult = groupIngredients(
+    const ingredientsList = ['ingredient 1', 'ingredient 2']
+    const result = groupIngredients(
       $,
       ingredientsList,
       '.ingredients h3',
       '.ingredients li',
     )
 
-    expect(ingredientsToObject(groupedResult)).toEqual({
-      Ingredients: ['ingredient 1'],
-      Heading: ['ingredient 2'],
-    })
+    expect(result).toHaveLength(2)
+    expect(getGroupValues(result, 'Ingredients')).toEqual(['ingredient 1'])
+    expect(getGroupValues(result, 'Heading')).toEqual(['ingredient 2'])
   })
 })

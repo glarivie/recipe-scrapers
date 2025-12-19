@@ -54,17 +54,44 @@
   "language": "en",
   "title": "One-Pot Chicken and Rice Soup",
   "ingredients": [
-    "2 bone-in chicken breasts, skin removed (1 to 1 1/2 pounds)",
-    "1 cup long-grain white rice, like basmati",
-    "2 celery ribs, diced small",
-    "2 medium carrots, peeled and diced small",
-    "1 onion, diced small",
-    "2 cloves garlic, peeled but left whole",
-    "1 teaspoon salt, plus more to taste (see Recipe Note)",
-    "1/2 teaspoon ground black pepper",
-    "2 quarts unsalted or low-sodium chicken stock",
-    "Juice of 1/2 lemon (about 3 tablespoons)",
-    "Chopped fresh parsley, for serving"
+    {
+      "name": "Ingredients",
+      "items": [
+        {
+          "value": "2 bone-in chicken breasts, skin removed (1 to 1 1/2 pounds)"
+        },
+        {
+          "value": "1 cup long-grain white rice, like basmati"
+        },
+        {
+          "value": "2 celery ribs, diced small"
+        },
+        {
+          "value": "2 medium carrots, peeled and diced small"
+        },
+        {
+          "value": "1 onion, diced small"
+        },
+        {
+          "value": "2 cloves garlic, peeled but left whole"
+        },
+        {
+          "value": "1 teaspoon salt, plus more to taste (see Recipe Note)"
+        },
+        {
+          "value": "1/2 teaspoon ground black pepper"
+        },
+        {
+          "value": "2 quarts unsalted or low-sodium chicken stock"
+        },
+        {
+          "value": "Juice of 1/2 lemon (about 3 tablespoons)"
+        },
+        {
+          "value": "Chopped fresh parsley, for serving"
+        }
+      ]
+    }
   ],
   "instructions": [
     "Assemble the soup and bring to a simmer: Combine the chicken, white rice, celery, carrots, onions, garlic, salt, and pepper in a large pot. Add the chicken stock and bring to a boil over high heat. Once the soup is boiling, reduce the heat to keep the soup at a gentle simmer.",

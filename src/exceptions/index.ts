@@ -31,3 +31,10 @@ export class ExtractionFailedException extends Error {
     this.name = 'ExtractionFailedException'
   }
 }
+
+export class NoIngredientsFoundException extends ExtractionFailedException {
+  constructor() {
+    super('ingredients')
+    this.name = 'NoIngredientsFoundException'
+  }
+}

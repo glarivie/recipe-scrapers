@@ -35,16 +35,41 @@
   "language": "en",
   "title": "Four Cheese Margherita Pizza",
   "ingredients": [
-    "0.25 cup olive oil",
-    "1 tablespoon minced garlic",
-    "0.5 teaspoon sea salt",
-    "8 Roma tomatoes, sliced",
-    "2 (12 inch) pre-baked pizza crusts",
-    "8 ounces shredded Mozzarella cheese",
-    "4 ounces shredded Fontina cheese",
-    "10 fresh basil leaves, washed, dried",
-    "0.5 cup freshly grated Parmesan cheese",
-    "0.5 cup crumbled feta cheese"
+    {
+      "name": "Ingredients",
+      "items": [
+        {
+          "value": "0.25 cup olive oil"
+        },
+        {
+          "value": "1 tablespoon minced garlic"
+        },
+        {
+          "value": "0.5 teaspoon sea salt"
+        },
+        {
+          "value": "8 Roma tomatoes, sliced"
+        },
+        {
+          "value": "2 (12 inch) pre-baked pizza crusts"
+        },
+        {
+          "value": "8 ounces shredded Mozzarella cheese"
+        },
+        {
+          "value": "4 ounces shredded Fontina cheese"
+        },
+        {
+          "value": "10 fresh basil leaves, washed, dried"
+        },
+        {
+          "value": "0.5 cup freshly grated Parmesan cheese"
+        },
+        {
+          "value": "0.5 cup crumbled feta cheese"
+        }
+      ]
+    }
   ],
   "instructions": [
     "Stir together olive oil, garlic, and salt; toss with tomatoes, and allow to stand for 15 minutes. Preheat oven to 400 degrees F (200 degrees C).",

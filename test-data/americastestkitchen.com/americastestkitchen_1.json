@@ -1,10 +1,16 @@
 {
   "siteName": "America's Test Kitchen",
-  "category": ["Main Courses", "Casseroles"],
+  "category": [
+    "Main Courses",
+    "Casseroles"
+  ],
   "cookTime": null,
   "prepTime": null,
   "totalTime": 210,
-  "cuisine": ["Italian", "Europe"],
+  "cuisine": [
+    "Italian",
+    "Europe"
+  ],
   "cookingMethod": null,
   "ratings": 4.4,
   "ratingsCount": 135,
@@ -43,33 +49,80 @@
   "host": "americastestkitchen.com",
   "language": "en",
   "title": "Lasagna Bolognese, Simplified",
-  "ingredients": {
-    "Meat Sauce (Ragù)": [
-      "1 medium carrot, peeled and roughly chopped",
-      "1 medium rib celery, roughly chopped",
-      "1/2 small onion, roughly chopped",
-      "1 (28 ounce) can whole tomatoes with juice",
-      "2 tablespoons unsalted butter",
-      "8 ounces ground beef, preferably 90 percent lean",
-      "8 ounces ground pork",
-      "8 ounces ground veal",
-      "1 1/2 cups whole milk",
-      "1 1/2 cups dry white wine",
-      "2 tablespoons tomato paste",
-      "1 teaspoon table salt",
-      "1/4 teaspoon ground black pepper"
-    ],
-    "Béchamel": [
-      "4 tablespoons unsalted butter",
-      "1/4 cup unbleached all-purpose flour",
-      "4 cups whole milk",
-      "3/4 teaspoon table salt"
-    ],
-    "Noodles and Cheese": [
-      "15 sheets no-boil lasagna noodle (9 ounces)",
-      "4 ounces Parmesan cheese, grated (2 cups)"
-    ]
-  },
+  "ingredients": [
+    {
+      "name": "Meat Sauce (Ragù)",
+      "items": [
+        {
+          "value": "1 medium carrot, peeled and roughly chopped"
+        },
+        {
+          "value": "1 medium rib celery, roughly chopped"
+        },
+        {
+          "value": "1/2 small onion, roughly chopped"
+        },
+        {
+          "value": "1 (28 ounce) can whole tomatoes with juice"
+        },
+        {
+          "value": "2 tablespoons unsalted butter"
+        },
+        {
+          "value": "8 ounces ground beef, preferably 90 percent lean"
+        },
+        {
+          "value": "8 ounces ground pork"
+        },
+        {
+          "value": "8 ounces ground veal"
+        },
+        {
+          "value": "1 1/2 cups whole milk"
+        },
+        {
+          "value": "1 1/2 cups dry white wine"
+        },
+        {
+          "value": "2 tablespoons tomato paste"
+        },
+        {
+          "value": "1 teaspoon table salt"
+        },
+        {
+          "value": "1/4 teaspoon ground black pepper"
+        }
+      ]
+    },
+    {
+      "name": "Béchamel",
+      "items": [
+        {
+          "value": "4 tablespoons unsalted butter"
+        },
+        {
+          "value": "1/4 cup unbleached all-purpose flour"
+        },
+        {
+          "value": "4 cups whole milk"
+        },
+        {
+          "value": "3/4 teaspoon table salt"
+        }
+      ]
+    },
+    {
+      "name": "Noodles and Cheese",
+      "items": [
+        {
+          "value": "15 sheets no-boil lasagna noodle (9 ounces)"
+        },
+        {
+          "value": "4 ounces Parmesan cheese, grated (2 cups)"
+        }
+      ]
+    }
+  ],
   "instructions": [
     "Note: For assembly, both the meat sauce and the bechamel should be just warm to the touch, not piping hot. Both sauces can be made, cooled, and refrigerated up to 2 days ahead, then gently reheated until warm. In terms of flavor and texture, we find that Barilla no-boil noodles are the closest to fresh, but this recipe will work with all major brands of no-boil noodles.",
     "For the meat sauce: Process carrot, celery, and onion in food processor until finely chopped, about ten 1-second pulses, scraping down bowl as necessary; transfer mixture to small bowl. Wipe out food processor workbowl; process tomatoes and juice until finely chopped, six to eight 1-second pulses. Heat butter in heavy-bottomed Dutch oven over medium heat until foaming; add carrot, celery, and onion and cook, stirring occasionally, until softened but not browned, about 4 minutes. Add ground meats and cook, breaking meat into 1-inch pieces with wooden spoon, about 1 minute. Add milk and stir, breaking meat into 1/2-inch bits; bring to simmer and cook, stirring to break meat into small pieces, until almost all liquid has evaporated, 20 to 30 minutes. Using potato masher or wooden spoon, break up any remaining clumps of meat (no large pieces should remain). Add wine and bring to simmer; cook, stirring occasionally, until liquid has evaporated, 20 to 30 minutes. Stir in tomato paste until combined, about 1 minute; add chopped tomatoes, salt, and pepper. Bring to simmer, then reduce heat to medium-low and cook until sauce is slightly thickened, about 15 minutes. (You should have about 6 cups meat sauce.) Transfer meat sauce to bowl and cool until just warm to touch, about 30 minutes.",

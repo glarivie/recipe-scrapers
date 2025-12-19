@@ -5,7 +5,7 @@ import {
   UnsupportedFieldException,
 } from '@/exceptions'
 import type { RecipeFields } from '@/types/recipe.interface'
-import { isList } from '@/utils/ingredients'
+import { isIngredients } from '@/utils/ingredients'
 import { SchemaOrgException, SchemaOrgPlugin } from '../index'
 
 const minimalJsonLd = `
@@ -84,12 +84,33 @@ describe('SchemaOrgPlugin', () => {
   it('extracts ingredient and instruction lists', () => {
     const ingredients = plugin.extract('ingredients')
 
-    expect(isList(ingredients)).toBe(true)
-    // @ts-expect-error
-    expect(Array.from(ingredients)).toEqual(['a', 'b'])
+    expect(isIngredients(ingredients)).toBe(true)
+    expect(ingredients).toHaveLength(1)
+    expect(ingredients[0].name).toBe('Ingredients')
+    expect(ingredients[0].items.map((i) => i.value)).toEqual(['a', 'b'])
     expect(Array.from(plugin.extract('instructions'))).toEqual([
       'step1',
       'step2',
+    ])
+  })
+
+  it('deduplicates ingredient values', () => {
+    const jsonWithDupes = `
+      <script type="application/ld+json">
+      {
+        "@type": "Recipe",
+        "name": "Test",
+        "recipeIngredient": ["salt", "pepper", "salt", "garlic", "pepper"]
+      }
+      </script>`
+    const dupePlugin = new SchemaOrgPlugin(load(jsonWithDupes))
+    const ingredients = dupePlugin.extract('ingredients')
+
+    expect(ingredients).toHaveLength(1)
+    expect(ingredients[0].items.map((i) => i.value)).toEqual([
+      'salt',
+      'pepper',
+      'garlic',
     ])
   })
 

@@ -1,6 +1,7 @@
 import { AbstractScraper } from '@/abstract-scraper'
+import { NoIngredientsFoundException } from '@/exceptions'
 import type { RecipeFields } from '@/types/recipe.interface'
-import { groupIngredients, isList } from '@/utils/ingredients'
+import { flattenIngredients, groupIngredients } from '@/utils/ingredients'
 
 export class BBCGoodFood extends AbstractScraper {
   static host() {
@@ -17,17 +18,17 @@ export class BBCGoodFood extends AbstractScraper {
     const headingSelector = '.recipe__ingredients h3'
     const ingredientSelector = '.recipe__ingredients li'
 
-    if (isList(prevValue) && prevValue.size > 0) {
-      const result = groupIngredients(
+    if (prevValue && prevValue.length > 0) {
+      const values = flattenIngredients(prevValue)
+
+      return groupIngredients(
         this.$,
-        prevValue,
+        values,
         headingSelector,
         ingredientSelector,
       )
-
-      return result
     }
 
-    throw new Error('No ingredients found to group')
+    throw new NoIngredientsFoundException()
   }
 }

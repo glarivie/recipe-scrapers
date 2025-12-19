@@ -1,10 +1,18 @@
 export type List = Set<string>
 
-export type IngredientsList = List
+export interface IngredientItem {
+  /** The ingredient value/text */
+  value: string
+}
 
-export type IngredientGroup = Map<string, List>
+export interface IngredientGroup {
+  /** Display name (e.g., "For the dough", "For the filling") */
+  name: string
+  /** List of ingredients in this group */
+  items: IngredientItem[]
+}
 
-export type Ingredients = IngredientsList | IngredientGroup
+export type Ingredients = IngredientGroup[]
 
 export interface Link {
   href: string
@@ -74,16 +82,20 @@ export interface RecipeData {
   /**
    * The ingredients needed to make the recipe.
    *
-   * This can be either a list of ingredients, or a map of ingredients,
-   * where each key is a group name and the value is a list of ingredients.
+   * This is an array of ingredient groups, where each group has a name
+   * (e.g., "For the sauce", "For the dough") and a list of ingredient items.
+   * When there are no groups, the default group name "Ingredients" is used.
+   *
    * @example
-   * {
-   *   'For the sauce': [
-   *     '2 tablespoons olive oil',
-   *     '1 onion, chopped',
-   *     // ...other ingredients
-   *   ]
-   * }
+   * [
+   *   {
+   *     name: 'For the sauce',
+   *     items: [
+   *       { value: '2 tablespoons olive oil' },
+   *       { value: '1 onion, chopped' },
+   *     ]
+   *   }
+   * ]
    */
   ingredients: Ingredients
   /**
@@ -239,7 +251,7 @@ export interface RecipeObject
   cuisine: string[]
   dietaryRestrictions: string[]
   equipment: string[]
-  ingredients: string[] | Record<string, string[]>
+  ingredients: Ingredients
   instructions: string[]
   keywords: string[]
   nutrients: Record<string, string>

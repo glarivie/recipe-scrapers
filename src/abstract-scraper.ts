@@ -14,7 +14,6 @@ import type {
   RecipeObject,
 } from './types/recipe.interface'
 import type { ScraperOptions } from './types/scraper.interface'
-import { ingredientsToObject } from './utils/ingredients'
 
 export abstract class AbstractScraper {
   protected readonly logger: Logger
@@ -198,7 +197,6 @@ export abstract class AbstractScraper {
       cuisine,
       dietaryRestrictions,
       equipment,
-      ingredients,
       instructions,
       keywords,
       nutrients,
@@ -212,7 +210,6 @@ export abstract class AbstractScraper {
       cuisine: Array.from(cuisine),
       dietaryRestrictions: Array.from(dietaryRestrictions),
       equipment: Array.from(equipment),
-      ingredients: ingredientsToObject(ingredients),
       instructions: Array.from(instructions),
       keywords: Array.from(keywords),
       nutrients: Object.fromEntries(nutrients),

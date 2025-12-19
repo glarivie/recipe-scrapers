@@ -42,16 +42,41 @@
   "language": "en-US",
   "title": "Cacio e Pepe Crackers",
   "ingredients": [
-    "1 1/2 cups/190 grams unbleached all-purpose flour (see Tip)",
-    "1 tablespoon freshly ground black pepper, plus more for finishing",
-    "1/2 teaspoon kosher salt",
-    "1/2 teaspoon onion powder (optional)",
-    "1/2 teaspoon ground mustard (optional)",
-    "1/8 teaspoon garlic powder (optional)",
-    "5 ounces/145 grams white Cheddar, roughly grated (about 1 1/4 cups packed)",
-    "3 ounces/85 grams Asiago cheese, roughly grated (about 3/4 cup)",
-    "5 tablespoons/70 grams unsalted butter, cold and cubed",
-    "1/4 cup/25 grams finely ground Pecorino Romano cheese (or Parmigiano-Reggiano or more Asiago), for sprinkling"
+    {
+      "name": "Ingredients",
+      "items": [
+        {
+          "value": "1 1/2 cups/190 grams unbleached all-purpose flour (see Tip)"
+        },
+        {
+          "value": "1 tablespoon freshly ground black pepper, plus more for finishing"
+        },
+        {
+          "value": "1/2 teaspoon kosher salt"
+        },
+        {
+          "value": "1/2 teaspoon onion powder (optional)"
+        },
+        {
+          "value": "1/2 teaspoon ground mustard (optional)"
+        },
+        {
+          "value": "1/8 teaspoon garlic powder (optional)"
+        },
+        {
+          "value": "5 ounces/145 grams white Cheddar, roughly grated (about 1 1/4 cups packed)"
+        },
+        {
+          "value": "3 ounces/85 grams Asiago cheese, roughly grated (about 3/4 cup)"
+        },
+        {
+          "value": "5 tablespoons/70 grams unsalted butter, cold and cubed"
+        },
+        {
+          "value": "1/4 cup/25 grams finely ground Pecorino Romano cheese (or Parmigiano-Reggiano or more Asiago), for sprinkling"
+        }
+      ]
+    }
   ],
   "instructions": [
     "In the bowl of a food processor, add the flour, pepper, salt and spices (if using), and pulse to combine.",

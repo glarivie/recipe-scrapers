@@ -31,20 +31,53 @@
   "language": "en",
   "title": "Cheesy Ground Beef & Cauliflower Casserole",
   "ingredients": [
-    "1 tablespoon extra-virgin olive oil",
-    "0.5 cup chopped onion",
-    "1 medium green bell pepper, chopped",
-    "1 pound lean ground beef",
-    "3 cups bite-size cauliflower florets",
-    "3 cloves garlic, minced",
-    "2 tablespoons chili powder",
-    "2 teaspoons ground cumin",
-    "1 teaspoon dried oregano",
-    "0.5 teaspoon salt",
-    "0.25 teaspoon ground chipotle",
-    "1 (15 ounce) can no-salt-added petite-diced tomatoes",
-    "2 cups shredded extra-sharp Cheddar cheese",
-    "0.333 cup sliced pickled jalapeños"
+    {
+      "name": "Ingredients",
+      "items": [
+        {
+          "value": "1 tablespoon extra-virgin olive oil"
+        },
+        {
+          "value": "0.5 cup chopped onion"
+        },
+        {
+          "value": "1 medium green bell pepper, chopped"
+        },
+        {
+          "value": "1 pound lean ground beef"
+        },
+        {
+          "value": "3 cups bite-size cauliflower florets"
+        },
+        {
+          "value": "3 cloves garlic, minced"
+        },
+        {
+          "value": "2 tablespoons chili powder"
+        },
+        {
+          "value": "2 teaspoons ground cumin"
+        },
+        {
+          "value": "1 teaspoon dried oregano"
+        },
+        {
+          "value": "0.5 teaspoon salt"
+        },
+        {
+          "value": "0.25 teaspoon ground chipotle"
+        },
+        {
+          "value": "1 (15 ounce) can no-salt-added petite-diced tomatoes"
+        },
+        {
+          "value": "2 cups shredded extra-sharp Cheddar cheese"
+        },
+        {
+          "value": "0.333 cup sliced pickled jalapeños"
+        }
+      ]
+    }
   ],
   "instructions": [
     "Position rack in upper third of oven. Preheat broiler to high.",

@@ -1,12 +1,10 @@
 import type { CheerioAPI } from 'cheerio'
 import type {
   IngredientGroup,
+  IngredientItem,
   Ingredients,
-  IngredientsList,
-  List,
-  RecipeObject,
 } from '@/types/recipe.interface'
-import { isString } from '.'
+import { isPlainObject, isString } from './index'
 import { normalizeString } from './parsing'
 
 export const DEFAULT_INGREDIENTS_GROUP_NAME = 'Ingredients'
@@ -34,41 +32,78 @@ const DEFAULT_GROUPING_SELECTORS = {
   { headingSelectors: string[]; itemSelectors: string[] }
 >
 
-export function isList(value: unknown): value is List {
-  return value instanceof Set && Array.from(value).every(isString)
+/**
+ * Creates an IngredientItem.
+ */
+export function createIngredientItem(value: string): IngredientItem {
+  return { value }
 }
 
+/**
+ * Creates an IngredientGroup.
+ */
+export function createIngredientGroup(
+  name: string,
+  items: IngredientItem[] = [],
+): IngredientGroup {
+  return { name, items }
+}
+
+/**
+ * Type guard to check if value is an IngredientItem.
+ */
+export function isIngredientItem(value: unknown): value is IngredientItem {
+  return isPlainObject(value) && 'value' in value && isString(value.value)
+}
+
+/**
+ * Type guard to check if value is an IngredientGroup.
+ */
 export function isIngredientGroup(value: unknown): value is IngredientGroup {
-  return value instanceof Map && Array.from(value.values()).every(isList)
+  return (
+    isPlainObject(value) &&
+    'name' in value &&
+    'items' in value &&
+    Array.isArray(value.items) &&
+    value.items.every(isIngredientItem)
+  )
 }
 
+/**
+ * Type guard to check if value is an Ingredients array.
+ */
 export function isIngredients(value: unknown): value is Ingredients {
-  return isList(value) || isIngredientGroup(value)
+  return Array.isArray(value) && value.every(isIngredientGroup)
 }
 
-export function ingredientsToObject(
-  value: Ingredients,
-): RecipeObject['ingredients'] {
-  if (isList(value)) {
-    return Array.from(value)
-  }
+/**
+ * Extracts the flat list of ingredient values from an Ingredients array.
+ * Useful when scrapers need to re-group ingredients using HTML structure.
+ */
+export function flattenIngredients(ingredients: Ingredients): string[] {
+  return ingredients.flatMap((group) => group.items.map((item) => item.value))
+}
 
-  if (isIngredientGroup(value)) {
-    const obj: Record<string, string[]> = {}
-
-    for (const [group, ingredients] of value.entries()) {
-      obj[group] = Array.from(ingredients)
-    }
-    return obj
-  }
-
-  throw new Error('Invalid ingredients type')
+/**
+ * Converts an array of strings to an Ingredients array with a single
+ * default group.
+ */
+export function stringsToIngredients(
+  values: string[],
+  groupName = DEFAULT_INGREDIENTS_GROUP_NAME,
+): Ingredients {
+  const items = values.map(createIngredientItem)
+  return [createIngredientGroup(groupName, items)]
 }
 
 export function scoreSentenceSimilarity(first: string, second: string): number {
-  if (first === second) return 1
+  if (first === second) {
+    return 1
+  }
 
-  if (first.length < 2 || second.length < 2) return 0
+  if (first.length < 2 || second.length < 2) {
+    return 0
+  }
 
   const bigrams = (s: string) =>
     new Set(Array.from({ length: s.length - 1 }, (_, i) => s.slice(i, i + 2)))
@@ -140,20 +175,21 @@ function findSelectors(
  * selectors from the default grouping selectors.
  *
  * @param $ Cheerio instance
- * @param ingredients Ingredients extracted from plugins, if any
- * @param headingSelector
- * @param itemSelector
+ * @param ingredientValues Array of ingredient strings to group
+ * @param headingSelector Optional custom heading selector
+ * @param itemSelector Optional custom item selector
+ * @returns Ingredients array with groups
  */
 export function groupIngredients(
   $: CheerioAPI,
-  ingredientsList: IngredientsList,
+  ingredientValues: string[],
   headingSelector?: string,
   itemSelector?: string,
 ): Ingredients {
   const selectors = findSelectors($, headingSelector, itemSelector)
 
   if (!selectors) {
-    return ingredientsList
+    return stringsToIngredients(ingredientValues)
   }
 
   const [groupNameSelector, ingredientSelector] = selectors
@@ -165,16 +201,14 @@ export function groupIngredients(
       .filter(Boolean),
   )
 
-  if (foundIngredients.size !== ingredientsList.size) {
-    throw new Error(
-      `Found ${foundIngredients.size} grouped ingredients but was expecting to find ${ingredientsList.size}.`,
-    )
+  // If HTML ingredient count doesn't match expected, fall back to ungrouped
+  // This handles cases like JS-rendered pages where not all content is in the
+  // raw HTML
+  if (foundIngredients.size !== ingredientValues.length) {
+    return stringsToIngredients(ingredientValues)
   }
 
-  // Convert ingredients to array for processing
-  const ingredients = Array.from(ingredientsList)
-
-  const groupings = new Map<string, Set<string>>()
+  const groupings = new Map<string, string[]>()
   let currentHeading: string | null = null
 
   // iterate in document order over headings & items
@@ -185,28 +219,37 @@ export function groupIngredients(
 
     if ($el.is(groupNameSelector)) {
       // it's a heading
-      const headingText = normalizeString($el.text())
+      const headingText = normalizeString($el.text()).replace(/:$/, '')
       currentHeading = headingText || DEFAULT_INGREDIENTS_GROUP_NAME
 
       if (!groupings.has(currentHeading)) {
-        groupings.set(currentHeading, new Set())
+        groupings.set(currentHeading, [])
       }
     } else if ($el.is(ingredientSelector)) {
       // it's an ingredient
       const text = normalizeString($el.text())
 
-      if (!text) continue
+      if (!text) {
+        continue
+      }
 
-      const matched = bestMatch(text, ingredients)
+      const matched = bestMatch(text, ingredientValues)
       const heading = currentHeading || DEFAULT_INGREDIENTS_GROUP_NAME
 
       if (!groupings.has(heading)) {
-        groupings.set(heading, new Set())
+        groupings.set(heading, [])
       }
 
-      groupings.get(heading)?.add(matched)
+      groupings.get(heading)?.push(matched)
     }
   }
 
-  return groupings
+  // Convert Map to Ingredients array
+  const result: Ingredients = []
+
+  for (const [name, items] of groupings.entries()) {
+    result.push(createIngredientGroup(name, items.map(createIngredientItem)))
+  }
+
+  return result
 }

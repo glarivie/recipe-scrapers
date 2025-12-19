@@ -4,6 +4,7 @@ import {
   NotImplementedException,
   UnsupportedFieldException,
 } from '@/exceptions'
+import { stringsToIngredients } from '@/utils/ingredients'
 import { ExtractorPlugin } from '../abstract-extractor-plugin'
 import type { RecipeFields } from '../types/recipe.interface'
 
@@ -35,7 +36,10 @@ class MockExtractorPlugin extends ExtractorPlugin {
       case 'description':
         return 'Mock Recipe Description' as RecipeFields[Key]
       case 'ingredients':
-        return new Set(['ingredient 1', 'ingredient 2']) as RecipeFields[Key]
+        return stringsToIngredients([
+          'ingredient 1',
+          'ingredient 2',
+        ]) as RecipeFields[Key]
       case 'instructions':
         return new Set(['step 1', 'step 2']) as RecipeFields[Key]
       case 'prepTime':
@@ -170,8 +174,9 @@ describe('ExtractorPlugin', () => {
       expect(plugin.extract('title')).toBe('Mock Recipe Title')
       expect(plugin.extract('description')).toBe('Mock Recipe Description')
       expect(plugin.extract('prepTime')).toBe(15)
-      expect(plugin.extract('ingredients')).toEqual(
-        new Set(['ingredient 1', 'ingredient 2']),
+      const ingredients = plugin.extract('ingredients')
+      expect(ingredients).toEqual(
+        stringsToIngredients(['ingredient 1', 'ingredient 2']),
       )
     })
 

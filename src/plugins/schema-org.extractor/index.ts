@@ -8,6 +8,7 @@ import {
 import { Logger, type LogLevel } from '@/logger'
 import type { RecipeFields } from '@/types/recipe.interface'
 import { isFunction, isNumber, isPlainObject, isString } from '@/utils'
+import { stringsToIngredients } from '@/utils/ingredients'
 import { splitInstructions } from '@/utils/instructions'
 import { extractRecipeMicrodata } from '@/utils/microdata'
 import { parseYields } from '@/utils/parse-yields'
@@ -432,19 +433,17 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 
     const flatIngredients = ingredients.flat()
 
-    const cleanedIngredients: string[] = []
+    const uniqueIngredients = new Set<string>()
 
     for (const item of flatIngredients) {
       const ingredient = this.getSchemaTextValue(item)
-        .replace(/\(\(/g, '(') // @TODO: is this needed?
-        .replace(/\)\)/g, ')')
 
       if (ingredient) {
-        cleanedIngredients.push(ingredient)
+        uniqueIngredients.add(ingredient)
       }
     }
 
-    return new Set(cleanedIngredients)
+    return stringsToIngredients([...uniqueIngredients])
   }
 
   public instructions(): RecipeFields['instructions'] {

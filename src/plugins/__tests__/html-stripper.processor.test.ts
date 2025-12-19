@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import type { Ingredients } from '../../types/recipe.interface'
+import {
+  createIngredientGroup,
+  createIngredientItem,
+} from '../../utils/ingredients'
 import { HtmlStripperPlugin } from '../html-stripper.processor'
 
 describe('HtmlStripperPlugin', () => {
@@ -31,28 +35,40 @@ describe('HtmlStripperPlugin', () => {
     expect(Array.from(output)).toEqual(['Step 1', 'Step & 2'])
   })
 
-  it('strips HTML from ingredients Set<string>', () => {
-    const input = new Set(['<i>1 cup</i> flour', '2 &lt;b&gt;eggs&lt;/b&gt;'])
-    const output = plugin.process('ingredients', input) as Set<string>
-    expect(Array.from(output)).toEqual(['1 cup flour', '2 <b>eggs</b>'])
+  it('strips HTML from ingredients', () => {
+    const input: Ingredients = [
+      createIngredientGroup('Ingredients', [
+        createIngredientItem('<i>1 cup</i> flour'),
+        createIngredientItem('2 &lt;b&gt;eggs&lt;/b&gt;'),
+      ]),
+    ]
+    const output = plugin.process('ingredients', input) as Ingredients
+    expect(output[0].items.map((i) => i.value)).toEqual([
+      '1 cup flour',
+      '2 <b>eggs</b>',
+    ])
   })
 
-  it('strips HTML from ingredient groups (Map<string, Set<string>>)', () => {
-    const group: Ingredients = new Map([
-      [
-        '<b>Group 1</b>',
-        new Set(['<i>1 cup</i> flour', '2 &lt;b&gt;eggs&lt;/b&gt;']),
-      ],
-      ['Other', new Set(['<span>3</span> apples'])],
+  it('strips HTML from ingredient groups', () => {
+    const input: Ingredients = [
+      createIngredientGroup('<b>Group 1</b>', [
+        createIngredientItem('<i>1 cup</i> flour'),
+        createIngredientItem('2 &lt;b&gt;eggs&lt;/b&gt;'),
+      ]),
+      createIngredientGroup('Other', [
+        createIngredientItem('<span>3</span> apples'),
+      ]),
+    ]
+    const output = plugin.process('ingredients', input) as Ingredients
+
+    expect(output).toHaveLength(2)
+    expect(output[0].name).toBe('Group 1')
+    expect(output[0].items.map((i) => i.value)).toEqual([
+      '1 cup flour',
+      '2 <b>eggs</b>',
     ])
-    const output = plugin.process('ingredients', group) as Map<
-      string,
-      Set<string>
-    >
-    expect(Array.from(output.entries())).toEqual([
-      ['Group 1', new Set(['1 cup flour', '2 <b>eggs</b>'])],
-      ['Other', new Set(['3 apples'])],
-    ])
+    expect(output[1].name).toBe('Other')
+    expect(output[1].items.map((i) => i.value)).toEqual(['3 apples'])
   })
 
   it('returns value unchanged for non-target fields', () => {

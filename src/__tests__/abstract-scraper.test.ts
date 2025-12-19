@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test'
 import { AbstractScraper } from '@/abstract-scraper'
 import { NotImplementedException } from '@/exceptions'
 import { Logger } from '@/logger'
-import type { RecipeFields, RecipeObject } from '@/types/recipe.interface'
+import type { RecipeFields } from '@/types/recipe.interface'
+import { stringsToIngredients } from '@/utils/ingredients'
 
 class DummyScraper extends AbstractScraper {
   // implement required static host
@@ -152,7 +153,7 @@ describe('AbstractScraper.toObject', () => {
       cuisine: new Set(['cui']),
       dietaryRestrictions: new Set(['veg']),
       equipment: new Set(['pan']),
-      ingredients: new Set(['ing1', 'ing2']),
+      ingredients: stringsToIngredients(['ing1', 'ing2']),
       instructions: new Set(['step1', 'step2']),
       keywords: new Set(['kw1']),
       nutrients: new Map([['cal', '200kcal']]),
@@ -185,17 +186,22 @@ describe('AbstractScraper.toObject', () => {
       ratingsCount: 100,
     }
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       ...expectedRest,
       category: ['cat1', 'cat2'],
       cuisine: ['cui'],
       dietaryRestrictions: ['veg'],
       equipment: ['pan'],
-      ingredients: ['ing1', 'ing2'],
+      ingredients: [
+        {
+          name: 'Ingredients',
+          items: [{ value: 'ing1' }, { value: 'ing2' }],
+        },
+      ],
       instructions: ['step1', 'step2'],
       keywords: ['kw1'],
       nutrients: { cal: '200kcal' },
       reviews: { rev1: 'Good' },
-    } as RecipeObject)
+    })
   })
 })

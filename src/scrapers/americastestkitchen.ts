@@ -1,10 +1,12 @@
 import z from 'zod/v4'
 import { AbstractScraper } from '@/abstract-scraper'
-import type { List, RecipeFields } from '@/types/recipe.interface'
+import type { Ingredients, RecipeFields } from '@/types/recipe.interface'
 import {
+  createIngredientGroup,
+  createIngredientItem,
   DEFAULT_INGREDIENTS_GROUP_NAME,
+  flattenIngredients,
   groupIngredients,
-  isList,
 } from '@/utils/ingredients'
 import { normalizeString } from '@/utils/parsing'
 
@@ -153,15 +155,14 @@ export class AmericasTestKitchen extends AbstractScraper {
     const headingSelector = '[class*="RecipeIngredientGroups_group"] > span'
     const ingredientSelector = '[class*="RecipeIngredient"] label'
 
-    if (isList(prevValue) && prevValue.size > 0) {
-      const result = groupIngredients(
+    if (prevValue && prevValue.length > 0) {
+      const values = flattenIngredients(prevValue)
+      return groupIngredients(
         this.$,
-        prevValue,
+        values,
         headingSelector,
         ingredientSelector,
       )
-
-      return result
     }
 
     return null
@@ -199,6 +200,7 @@ export class AmericasTestKitchen extends AbstractScraper {
     ]
 
     const filteredFragments: string[] = []
+
     for (const fragment of fragments) {
       if (fragment) {
         filteredFragments.push(fragment.trimEnd())
@@ -217,31 +219,17 @@ export class AmericasTestKitchen extends AbstractScraper {
 
     const { ingredientGroups } = data
 
-    // Single group - return IngredientsList (Set)
-    if (ingredientGroups.length === 1) {
-      const ingredientSet = new Set<string>()
-
-      for (const item of ingredientGroups[0].fields.recipeIngredientItems) {
-        ingredientSet.add(this.parseIngredientItem(item))
-      }
-
-      return ingredientSet
-    }
-
-    // Multiple groups - return IngredientGroup (Map)
-    const ingredientMap = new Map<string, List>()
+    const result: Ingredients = []
 
     for (const group of ingredientGroups) {
       const groupTitle = group.fields.title || DEFAULT_INGREDIENTS_GROUP_NAME
-      const ingredientSet = new Set<string>()
+      const items = group.fields.recipeIngredientItems.map((item) =>
+        createIngredientItem(this.parseIngredientItem(item)),
+      )
 
-      for (const item of group.fields.recipeIngredientItems) {
-        ingredientSet.add(this.parseIngredientItem(item))
-      }
-
-      ingredientMap.set(groupTitle, ingredientSet)
+      result.push(createIngredientGroup(groupTitle, items))
     }
 
-    return ingredientMap
+    return result
   }
 }

@@ -1,7 +1,12 @@
 import { PostProcessorPlugin } from '@/abstract-postprocessor-plugin'
+import type { List, RecipeFields } from '@/types/recipe.interface'
 import { isString } from '@/utils'
-import { isIngredientGroup, isIngredients, isList } from '@/utils/ingredients'
-import type { Ingredients, RecipeFields } from '../types/recipe.interface'
+import { isIngredients } from '@/utils/ingredients'
+import type { Ingredients } from '../types/recipe.interface'
+
+function isList(value: unknown): value is List {
+  return value instanceof Set && Array.from(value).every(isString)
+}
 
 export class HtmlStripperPlugin extends PostProcessorPlugin {
   name = 'HtmlStripper'
@@ -40,28 +45,13 @@ export class HtmlStripperPlugin extends PostProcessorPlugin {
   }
 
   private processIngredients(ingredients: Ingredients): Ingredients {
-    if (isList(ingredients)) {
-      // Handle Set<string> (IngredientsList)
-      const processedIngredients = Array.from(ingredients).map(this.stripHtml)
-      return new Set(processedIngredients)
-    }
-
-    if (isIngredientGroup(ingredients)) {
-      // Handle Map<string, Set<string>> (IngredientGroup)
-      const processedGroup = new Map<string, Set<string>>()
-
-      for (const [groupName, ingredientSet] of ingredients) {
-        const processedGroupName = this.stripHtml(groupName)
-        const processedIngredients = Array.from(ingredientSet).map(
-          this.stripHtml,
-        )
-        processedGroup.set(processedGroupName, new Set(processedIngredients))
-      }
-
-      return processedGroup
-    }
-
-    return ingredients
+    // Handle the new Ingredients array format
+    return ingredients.map((group) => ({
+      name: this.stripHtml(group.name),
+      items: group.items.map((item) => ({
+        value: this.stripHtml(item.value),
+      })),
+    }))
   }
 
   private stripHtml(html: string): string {
