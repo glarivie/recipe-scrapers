@@ -16,7 +16,7 @@ type IngredientItem = {
 }
 
 type IngredientGroup = {
-  name: string              // Group name, e.g., "For the dough" or "" for default
+  name: string | null       // Group name, e.g., "For the dough" or null for default
   items: IngredientItem[]   // Array of ingredients in this group
 }
 
@@ -34,7 +34,7 @@ type Ingredients = IngredientGroup[]  // Array of groups
 **Why groups?**
 
 - Many recipes organize ingredients into sections (e.g., "For the crust", "For the filling")
-- Default group name is empty string `""` for ungrouped ingredients
+- Default group name is `null` for ungrouped ingredients
 - Preserves recipe structure and improves readability
 
 ## Extraction Flow
@@ -189,7 +189,7 @@ Converts flat string array to default group structure:
 // Output:
 [
   { 
-    name: "",  // Default group
+    name: null,  // Default group
     items: [
       { value: "1 cup flour" },
       { value: "Salt to taste" }

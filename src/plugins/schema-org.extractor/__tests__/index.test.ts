@@ -85,9 +85,10 @@ describe('SchemaOrgPlugin', () => {
     const ingredients = plugin.extract('ingredients')
 
     expect(isIngredients(ingredients)).toBe(true)
-    expect(ingredients).toHaveLength(1)
-    expect(ingredients[0].name).toBe('Ingredients')
-    expect(ingredients[0].items.map((i) => i.value)).toEqual(['a', 'b'])
+    expect(ingredients).toEqual([
+      { name: null, items: [{ value: 'a' }, { value: 'b' }] },
+    ])
+
     expect(Array.from(plugin.extract('instructions'))).toEqual([
       'step1',
       'step2',
@@ -106,11 +107,11 @@ describe('SchemaOrgPlugin', () => {
     const dupePlugin = new SchemaOrgPlugin(load(jsonWithDupes))
     const ingredients = dupePlugin.extract('ingredients')
 
-    expect(ingredients).toHaveLength(1)
-    expect(ingredients[0].items.map((i) => i.value)).toEqual([
-      'salt',
-      'pepper',
-      'garlic',
+    expect(ingredients).toEqual([
+      {
+        name: null,
+        items: [{ value: 'salt' }, { value: 'pepper' }, { value: 'garlic' }],
+      },
     ])
   })
 

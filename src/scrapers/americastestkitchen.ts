@@ -4,7 +4,6 @@ import type { Ingredients, RecipeFields } from '@/types/recipe.interface'
 import {
   createIngredientGroup,
   createIngredientItem,
-  DEFAULT_INGREDIENTS_GROUP_NAME,
   flattenIngredients,
   groupIngredients,
 } from '@/utils/ingredients'
@@ -222,7 +221,8 @@ export class AmericasTestKitchen extends AbstractScraper {
     const result: Ingredients = []
 
     for (const group of ingredientGroups) {
-      const groupTitle = group.fields.title || DEFAULT_INGREDIENTS_GROUP_NAME
+      const groupTitle =
+        group.fields.title.length === 0 ? null : group.fields.title
       const items = group.fields.recipeIngredientItems.map((item) =>
         createIngredientItem(this.parseIngredientItem(item)),
       )

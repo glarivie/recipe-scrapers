@@ -6,8 +6,11 @@ export interface IngredientItem {
 }
 
 export interface IngredientGroup {
-  /** Display name (e.g., "For the dough", "For the filling") */
-  name: string
+  /**
+   * Display name (e.g., "For the dough", "For the filling"),
+   * or null for ungrouped ingredients
+   */
+  name: string | null
   /** List of ingredients in this group */
   items: IngredientItem[]
 }
@@ -84,7 +87,7 @@ export interface RecipeData {
    *
    * This is an array of ingredient groups, where each group has a name
    * (e.g., "For the sauce", "For the dough") and a list of ingredient items.
-   * When there are no groups, the default group name "Ingredients" is used.
+   * When there are no groups, the group name is null.
    *
    * @example
    * [

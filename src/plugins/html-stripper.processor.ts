@@ -47,7 +47,7 @@ export class HtmlStripperPlugin extends PostProcessorPlugin {
   private processIngredients(ingredients: Ingredients): Ingredients {
     // Handle the new Ingredients array format
     return ingredients.map((group) => ({
-      name: this.stripHtml(group.name),
+      name: group.name === null ? null : this.stripHtml(group.name),
       items: group.items.map((item) => ({
         value: this.stripHtml(item.value),
       })),

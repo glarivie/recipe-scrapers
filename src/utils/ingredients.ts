@@ -7,8 +7,6 @@ import type {
 import { isPlainObject, isString } from './index'
 import { normalizeString } from './parsing'
 
-export const DEFAULT_INGREDIENTS_GROUP_NAME = 'Ingredients'
-
 const DEFAULT_GROUPING_SELECTORS = {
   wprm: {
     headingSelectors: [
@@ -43,7 +41,7 @@ export function createIngredientItem(value: string): IngredientItem {
  * Creates an IngredientGroup.
  */
 export function createIngredientGroup(
-  name: string,
+  name: string | null,
   items: IngredientItem[] = [],
 ): IngredientGroup {
   return { name, items }
@@ -90,7 +88,7 @@ export function flattenIngredients(ingredients: Ingredients): string[] {
  */
 export function stringsToIngredients(
   values: string[],
-  groupName = DEFAULT_INGREDIENTS_GROUP_NAME,
+  groupName: string | null = null,
 ): Ingredients {
   const items = values.map(createIngredientItem)
   return [createIngredientGroup(groupName, items)]
@@ -208,7 +206,7 @@ export function groupIngredients(
     return stringsToIngredients(ingredientValues)
   }
 
-  const groupings = new Map<string, string[]>()
+  const groupings = new Map<string | null, string[]>()
   let currentHeading: string | null = null
 
   // iterate in document order over headings & items
@@ -220,7 +218,7 @@ export function groupIngredients(
     if ($el.is(groupNameSelector)) {
       // it's a heading
       const headingText = normalizeString($el.text()).replace(/:$/, '')
-      currentHeading = headingText || DEFAULT_INGREDIENTS_GROUP_NAME
+      currentHeading = headingText || null
 
       if (!groupings.has(currentHeading)) {
         groupings.set(currentHeading, [])
@@ -234,7 +232,7 @@ export function groupIngredients(
       }
 
       const matched = bestMatch(text, ingredientValues)
-      const heading = currentHeading || DEFAULT_INGREDIENTS_GROUP_NAME
+      const heading = currentHeading ?? null
 
       if (!groupings.has(heading)) {
         groupings.set(heading, [])

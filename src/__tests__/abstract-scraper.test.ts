@@ -194,7 +194,7 @@ describe('AbstractScraper.toObject', () => {
       equipment: ['pan'],
       ingredients: [
         {
-          name: 'Ingredients',
+          name: null,
           items: [{ value: 'ing1' }, { value: 'ing2' }],
         },
       ],

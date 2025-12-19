@@ -14,7 +14,10 @@ import {
 } from '../ingredients'
 
 /** Helper to get ingredient values from a result */
-function getGroupValues(result: Ingredients, groupName: string): string[] {
+function getGroupValues(
+  result: Ingredients,
+  groupName: string | null,
+): string[] {
   const group = result.find((g) => g.name === groupName)
   return group ? group.items.map((i) => i.value) : []
 }
@@ -83,7 +86,7 @@ describe('stringsToIngredients', () => {
     const result = stringsToIngredients(['flour', 'sugar', 'eggs'])
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
       },
     ])
@@ -227,7 +230,7 @@ describe('groupIngredients', () => {
 
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
       },
     ])
@@ -245,7 +248,7 @@ describe('groupIngredients', () => {
 
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'flour' }, { value: 'sugar' }, { value: 'eggs' }],
       },
     ])
@@ -315,7 +318,7 @@ describe('groupIngredients', () => {
     const result = groupIngredients($, ingredientsList)
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'ingredient 1' }, { value: 'ingredient 2' }],
       },
     ])
@@ -334,7 +337,7 @@ describe('groupIngredients', () => {
 
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'ingredient 1' }],
       },
     ])
@@ -354,7 +357,7 @@ describe('groupIngredients', () => {
 
     // Default heading for first ingredient
     const groupNames = result.map((g) => g.name)
-    expect(groupNames).toContain('Ingredients')
+    expect(groupNames).toContain(null)
     expect(groupNames).toContain('Group 1')
   })
 
@@ -461,7 +464,7 @@ describe('groupIngredients', () => {
 
     expect(result).toEqual([
       {
-        name: 'Ingredients',
+        name: null,
         items: [{ value: 'ingredient 1' }, { value: 'ingredient 2' }],
       },
     ])
@@ -491,7 +494,7 @@ describe('groupIngredients', () => {
     )
 
     expect(result).toHaveLength(2)
-    expect(getGroupValues(result, 'Ingredients')).toEqual(['ingredient 1'])
+    expect(getGroupValues(result, null)).toEqual(['ingredient 1'])
     expect(getGroupValues(result, 'Heading')).toEqual(['ingredient 2'])
   })
 })
