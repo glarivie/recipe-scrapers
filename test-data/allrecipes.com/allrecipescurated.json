@@ -1,14 +1,10 @@
 {
   "siteName": "Allrecipes",
-  "category": [
-    "Dinner"
-  ],
+  "category": ["Dinner"],
   "cookTime": 10,
   "prepTime": 15,
   "totalTime": 40,
-  "cuisine": [
-    "Italian Inspired"
-  ],
+  "cuisine": ["Italian Inspired"],
   "cookingMethod": null,
   "ratings": 4.8,
   "ratingsCount": 489,
@@ -75,9 +71,15 @@
     {
       "name": null,
       "items": [
-        { "value": "Stir together olive oil, garlic, and salt; toss with tomatoes, and allow to stand for 15 minutes. Preheat oven to 400 degrees F (200 degrees C)." },
-        { "value": "Brush each pizza crust with some of the tomato marinade. Sprinkle the pizzas evenly with Mozzarella and Fontina cheeses. Arrange tomatoes overtop, then sprinkle with shredded basil, Parmesan, and feta cheese." },
-        { "value": "Bake in preheated oven until the cheese is bubbly and golden brown, about 10 minutes." }
+        {
+          "value": "Stir together olive oil, garlic, and salt; toss with tomatoes, and allow to stand for 15 minutes. Preheat oven to 400 degrees F (200 degrees C)."
+        },
+        {
+          "value": "Brush each pizza crust with some of the tomato marinade. Sprinkle the pizzas evenly with Mozzarella and Fontina cheeses. Arrange tomatoes overtop, then sprinkle with shredded basil, Parmesan, and feta cheese."
+        },
+        {
+          "value": "Bake in preheated oven until the cheese is bubbly and golden brown, about 10 minutes."
+        }
       ]
     }
   ],

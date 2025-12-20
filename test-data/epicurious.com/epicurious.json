@@ -12,9 +12,7 @@
   "cookTime": null,
   "prepTime": null,
   "totalTime": null,
-  "cuisine": [
-    "Asian"
-  ],
+  "cuisine": ["Asian"],
   "cookingMethod": null,
   "ratings": 4,
   "ratingsCount": 4,
@@ -58,8 +56,12 @@
     {
       "name": null,
       "items": [
-        { "value": "Cook noodles according to package directions. During the last minute of cooking, add escarole. Drain and rinse under cold water." },
-        { "value": "Toss noodles, escarole, and chili sauce in a large bowl until coated; season with salt. Divide noodles between bowls. Slice scallions into 1\" pieces and place on top of noodles along with some tofu crumbles, radishes, and peanuts." }
+        {
+          "value": "Cook noodles according to package directions. During the last minute of cooking, add escarole. Drain and rinse under cold water."
+        },
+        {
+          "value": "Toss noodles, escarole, and chili sauce in a large bowl until coated; season with salt. Divide noodles between bowls. Slice scallions into 1\" pieces and place on top of noodles along with some tofu crumbles, radishes, and peanuts."
+        }
       ]
     }
   ],

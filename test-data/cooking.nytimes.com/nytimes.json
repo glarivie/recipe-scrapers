@@ -1,16 +1,10 @@
 {
   "siteName": "NYT Cooking",
-  "category": [
-    "snack",
-    "crackers and chips",
-    "finger foods"
-  ],
+  "category": ["snack", "crackers and chips", "finger foods"],
   "cookTime": 45,
   "prepTime": null,
   "totalTime": 45,
-  "cuisine": [
-    "american"
-  ],
+  "cuisine": ["american"],
   "cookingMethod": null,
   "ratings": 4,
   "ratingsCount": 228,
@@ -29,12 +23,7 @@
     "fiberContent": "1 gram"
   },
   "dietaryRestrictions": [],
-  "keywords": [
-    "butter",
-    "cheddar",
-    "flour",
-    "pecorino"
-  ],
+  "keywords": ["butter", "cheddar", "flour", "pecorino"],
   "links": [],
   "author": "Laurie Ellen Pellicano",
   "canonicalUrl": "https://cooking.nytimes.com/recipes/1021128-cacio-e-pepe-crackers",

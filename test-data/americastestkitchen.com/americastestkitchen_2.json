@@ -1,10 +1,7 @@
 {
   "author": "Steve Dunn",
   "canonicalUrl": "https://www.americastestkitchen.com/recipes/11534-classic-sloppy-joes",
-  "category": [
-    "Main Courses",
-    "Sandwiches"
-  ],
+  "category": ["Main Courses", "Sandwiches"],
   "cookTime": null,
   "cookingMethod": null,
   "cuisine": [],
@@ -72,18 +69,25 @@
     {
       "name": null,
       "items": [
-        { "value": "Note: Tossing the beef with baking soda in step 1 helps keep it tender and juicy; adding baking soda to the skillet with the onion in step 2 helps the onion break down. You may substitute 90 percent lean ground beef in this recipe, but the cooked mixture will be a bit less tender. Serve the Sloppy Joes with pickle chips, if desired." },
-        { "value": "Combine 1 tablespoon water and ½ teaspoon baking soda in small bowl. In large bowl, toss beef with baking soda mixture and ½ teaspoon salt until thoroughly combined. Set aside." },
-        { "value": "Heat oil in 12-inch nonstick skillet over medium heat until shimmering. Add onion and remaining ⅛ teaspoon baking soda and stir to coat. Cook, stirring occasionally, until onion is softened, 3 to 4 minutes. Add garlic and cook, stirring constantly, until fragrant, about 30 seconds. Stir in sugar, paprika, pepper flakes, and remaining ⅛ teaspoon salt and cook, stirring constantly, until paprika is fragrant, about 1 minute. Add tomato paste and cook, stirring constantly, until paste is rust-colored, 3 to 4 minutes." },
-        { "value": "Add beef and cook, breaking up meat with wooden spoon, until beef is no longer pink, about 5 minutes. Mash beef with potato masher until fine-textured, about 1 minute. Add ketchup, vinegar, and Worcestershire and stir to combine, scraping up any browned bits." },
-        { "value": "Combine cornstarch and remaining 1 tablespoon water in small bowl, then pour cornstarch mixture over beef and stir to incorporate. Cook, stirring constantly, until sauce thickens and coats beef, about 1 minute. Season with salt, extra sugar, and extra vinegar to taste. Spoon beef mixture onto buns and serve." }
+        {
+          "value": "Note: Tossing the beef with baking soda in step 1 helps keep it tender and juicy; adding baking soda to the skillet with the onion in step 2 helps the onion break down. You may substitute 90 percent lean ground beef in this recipe, but the cooked mixture will be a bit less tender. Serve the Sloppy Joes with pickle chips, if desired."
+        },
+        {
+          "value": "Combine 1 tablespoon water and ½ teaspoon baking soda in small bowl. In large bowl, toss beef with baking soda mixture and ½ teaspoon salt until thoroughly combined. Set aside."
+        },
+        {
+          "value": "Heat oil in 12-inch nonstick skillet over medium heat until shimmering. Add onion and remaining ⅛ teaspoon baking soda and stir to coat. Cook, stirring occasionally, until onion is softened, 3 to 4 minutes. Add garlic and cook, stirring constantly, until fragrant, about 30 seconds. Stir in sugar, paprika, pepper flakes, and remaining ⅛ teaspoon salt and cook, stirring constantly, until paprika is fragrant, about 1 minute. Add tomato paste and cook, stirring constantly, until paste is rust-colored, 3 to 4 minutes."
+        },
+        {
+          "value": "Add beef and cook, breaking up meat with wooden spoon, until beef is no longer pink, about 5 minutes. Mash beef with potato masher until fine-textured, about 1 minute. Add ketchup, vinegar, and Worcestershire and stir to combine, scraping up any browned bits."
+        },
+        {
+          "value": "Combine cornstarch and remaining 1 tablespoon water in small bowl, then pour cornstarch mixture over beef and stir to incorporate. Cook, stirring constantly, until sauce thickens and coats beef, about 1 minute. Season with salt, extra sugar, and extra vinegar to taste. Spoon beef mixture onto buns and serve."
+        }
       ]
     }
   ],
-  "keywords": [
-    "Main Courses",
-    "Sandwiches"
-  ],
+  "keywords": ["Main Courses", "Sandwiches"],
   "language": "en",
   "links": [],
   "nutrients": {

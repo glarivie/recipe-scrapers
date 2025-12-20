@@ -1,17 +1,10 @@
 {
   "siteName": "Simply Recipes",
-  "category": [
-    "Lunch",
-    "Dinner",
-    "Entree",
-    "Sandwich"
-  ],
+  "category": ["Lunch", "Dinner", "Entree", "Sandwich"],
   "cookTime": 30,
   "prepTime": 15,
   "totalTime": 45,
-  "cuisine": [
-    "American"
-  ],
+  "cuisine": ["American"],
   "cookingMethod": null,
   "ratings": 5,
   "ratingsCount": 1,
@@ -119,10 +112,18 @@
     {
       "name": null,
       "items": [
-        { "value": "Roast the parsnips: Preheat the oven to 425°F (220°C). Line a large baking sheet with parchment paper. Drizzle the olive oil, salt, and pepper on the baking pan. Toss the parsnips in the oil to coat. Bake for about 20 minutes, flipping occasionally, until the parsnips are tender inside and golden brown in some spots. Let cool." },
-        { "value": "Make the dressing and assemble the salad: In a large mixing bowl, stir together the mayo, lemon juice, kelp powder, capers, chives, and salt. Fold in the celery and the cooled parsnips. Chill the salad for about 20 minutes." },
-        { "value": "Toast the buns: Preheat a large skillet, preferably cast-iron, over medium heat. Butter the outside of each hot dog bun. Place them in the skillet and toast until golden brown, about 2 minutes for each side." },
-        { "value": "Assemble: Fill the buns with salad. Sprinkle with paprika and additional chives. Serve with plenty of napkins." }
+        {
+          "value": "Roast the parsnips: Preheat the oven to 425°F (220°C). Line a large baking sheet with parchment paper. Drizzle the olive oil, salt, and pepper on the baking pan. Toss the parsnips in the oil to coat. Bake for about 20 minutes, flipping occasionally, until the parsnips are tender inside and golden brown in some spots. Let cool."
+        },
+        {
+          "value": "Make the dressing and assemble the salad: In a large mixing bowl, stir together the mayo, lemon juice, kelp powder, capers, chives, and salt. Fold in the celery and the cooled parsnips. Chill the salad for about 20 minutes."
+        },
+        {
+          "value": "Toast the buns: Preheat a large skillet, preferably cast-iron, over medium heat. Butter the outside of each hot dog bun. Place them in the skillet and toast until golden brown, about 2 minutes for each side."
+        },
+        {
+          "value": "Assemble: Fill the buns with salad. Sprinkle with paprika and additional chives. Serve with plenty of napkins."
+        }
       ]
     }
   ],
