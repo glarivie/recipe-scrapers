@@ -3,7 +3,7 @@ import { isNull } from '@/utils'
 import {
   zHttpUrl,
   zNonEmptyArray,
-  zPositiveNumber,
+  zPositiveInteger,
   zString,
 } from './common.schema'
 
@@ -53,7 +53,7 @@ export const IngredientItemSchema = z.object({
  * Schema for a group of ingredients
  */
 export const IngredientGroupSchema = z.object({
-  name: zString('Ingredient group name').nullable().default(null),
+  name: zString('Ingredient group name').nullable(),
   items: zNonEmptyArray(IngredientItemSchema, 'Ingredient'),
 })
 
@@ -76,7 +76,7 @@ export const InstructionItemSchema = z.object({
  * Schema for a group of instruction steps
  */
 export const InstructionGroupSchema = z.object({
-  name: zString('Instruction group name').nullable().default(null),
+  name: zString('Instruction group name').nullable(),
   items: zNonEmptyArray(InstructionItemSchema, 'Instruction'),
 })
 
@@ -134,9 +134,9 @@ export const RecipeObjectBaseSchema = z.object({
   image: zHttpUrl('Image'),
 
   // Time fields (in minutes)
-  totalTime: zPositiveNumber('Total time'),
-  cookTime: zPositiveNumber('Cook time'),
-  prepTime: zPositiveNumber('Prep time'),
+  totalTime: zPositiveInteger('Total time'),
+  cookTime: zPositiveInteger('Cook time'),
+  prepTime: zPositiveInteger('Prep time'),
 
   // Ratings
   ratings: z
@@ -156,9 +156,9 @@ export const RecipeObjectBaseSchema = z.object({
 
   language: zString('Language', { min: 2 }).optional().default('en'),
 
-  siteName: zString('Site name').nullable().default(null),
+  siteName: zString('Site name').nullable(),
 
-  cookingMethod: zString('Cooking method').nullable().default(null),
+  cookingMethod: zString('Cooking method').nullable(),
 
   // List fields
   category: z

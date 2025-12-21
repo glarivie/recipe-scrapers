@@ -370,6 +370,13 @@ describe('RecipeObjectSchema', () => {
     )
   })
 
+  it('should reject 0 time values', () => {
+    const recipe = { ...validRecipe, totalTime: 0 }
+    expect(() => RecipeObjectSchema.parse(recipe)).toThrow(
+      'Total time must be positive',
+    )
+  })
+
   it('should accept null time values', () => {
     const recipe = {
       ...validRecipe,

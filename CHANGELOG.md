@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-rc.3] - 2025-12-21
+
+### Changed
+
+- Enforce positive integer values for recipe time fields (`totalTime`, `cookTime`, `prepTime`)
+- Rename schema helper `zPositiveNumber` to `zPositiveInteger`
+- Stop defaulting nullable schema fields to `null`
+
 ## [1.0.0-rc.2] - 2025-12-20
 
 ### Added
@@ -14,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Make `links` field optional, and thus `undefined` in the recipe object, unless link parsing is enabled
-- Move schema transform & refinement validations into a helper function `applyRecipeValidations`
+- Make `links` optional; it stays `undefined` unless link parsing is enabled
+- Extract schema transform/refinement validations into `applyRecipeValidations`
 
 ## [1.0.0-rc.1] - 2025-12-20
 
@@ -25,18 +33,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix main/module/type entriess in package.json; add exports field
+- Fix `main`/`module`/`types` entries in `package.json`; add `exports`
 
 ## [1.0.0-rc.0] - 2025-12-20
 
 ### Added
 
 - Optional ingredient parsing via [parse-ingredient](https://github.com/jakeboone02/parse-ingredient)
-- `parse()` and `safeParse()` methods for Zod schema validated recipe extraction
+- `parse()` and `safeParse()` methods for Zod-validated recipe extraction
 
 ### Changed
 
-- **BREAKING**: Renamed `toObject()` method to `toRecipeObject()` for clarity
+- **BREAKING**: Rename `toObject()` method to `toRecipeObject()` for clarity
 - **BREAKING**: Ingredients and instructions now require grouped structures (each group has `name` and `items`) instead of flat arrays
 
 ---

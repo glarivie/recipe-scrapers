@@ -23,14 +23,13 @@ export const zHttpUrl = (fieldName: string) =>
   z.httpUrl(`${fieldName} must be a valid URL`)
 
 /**
- * Helper to create a positive number field
+ * Helper to create a positive integer field
  */
-export const zPositiveNumber = (fieldName: string) =>
+export const zPositiveInteger = (fieldName: string) =>
   z
-    .number(`${fieldName} must be a number`)
+    .int(`${fieldName} must be an integer`)
     .positive(`${fieldName} must be positive`)
     .nullable()
-    .default(null)
 
 export const zNonEmptyArray = <T>(
   schema: z.core.$ZodType<T>,
