@@ -1,5 +1,6 @@
+import { describe, expect, it } from "vitest";
+
 import { getHostName, isDefined, isFunction, isNumber, isPlainObject, isString } from "../index";
-import { describe, expect, it } from "bun:test";
 
 describe("isDefined", () => {
 	it("returns false for undefined", () => {

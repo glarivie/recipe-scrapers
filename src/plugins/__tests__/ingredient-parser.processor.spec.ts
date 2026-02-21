@@ -1,7 +1,8 @@
+import { describe, expect, it } from "vitest";
+
 import type { Ingredients } from "~/types/recipe.interface";
 
 import { IngredientParserPlugin } from "../ingredient-parser.processor";
-import { describe, expect, it } from "bun:test";
 
 describe("IngredientParserPlugin", () => {
 	const plugin = new IngredientParserPlugin();

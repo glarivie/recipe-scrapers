@@ -1,7 +1,8 @@
+import { describe, expect, it } from "vitest";
+
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
 import type { PostProcessorPlugin } from "../abstract-postprocessor-plugin";
 import { PluginManager } from "../plugin-manager";
-import { describe, expect, it } from "bun:test";
 
 describe("PluginManager", () => {
 	const makeExtractor = (name: string, priority: number): ExtractorPlugin =>

@@ -1,4 +1,5 @@
-import { readdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type {
@@ -15,8 +16,8 @@ import {
 } from "../src/utils/instructions";
 import { normalizeString, splitToList } from "../src/utils/parsing";
 
-const INPUT_DIR = path.resolve(import.meta.dir, "../.temp");
-const OUTPUT_DIR = path.resolve(import.meta.dir, "../test-data");
+const INPUT_DIR = path.resolve(import.meta.dirname, "../.temp");
+const OUTPUT_DIR = path.resolve(import.meta.dirname, "../test-data");
 
 const DEFAULT_VALUES = {
 	siteName: null,
@@ -68,10 +69,10 @@ const OVERRIDE_VALUES: Record<
 /**
  * Returns true if the given path exists and is a directory
  */
-async function isDirectory(path: string): Promise<boolean> {
+async function isDirectory(p: string): Promise<boolean> {
 	try {
-		const stat = await Bun.file(path).stat();
-		return stat.isDirectory();
+		const s = await stat(p);
+		return s.isDirectory();
 	} catch {
 		return false;
 	}
@@ -216,7 +217,7 @@ async function processJson(host: string, inPath: string, outPath: string) {
 	let data: Record<string, unknown>;
 
 	try {
-		raw = await Bun.file(inPath).text();
+		raw = await readFile(inPath, "utf-8");
 		data = JSON.parse(raw);
 	} catch {
 		console.error(`Skipping invalid JSON: ${inPath}`);
@@ -227,7 +228,7 @@ async function processJson(host: string, inPath: string, outPath: string) {
 	const output = normalizeData(host, filename, data);
 	const content = JSON.stringify(output, null, 2);
 
-	await Bun.write(outPath, content);
+	await writeFile(outPath, content);
 }
 
 /** Recursively traverse input directory, mirroring structure in output dir */
@@ -240,9 +241,7 @@ async function traverse(host: string, inDir: string, outDir: string) {
 		if (entry.isDirectory()) {
 			await traverse(host, inPath, outPath);
 		} else if (entry.isFile()) {
-			const exists = await Bun.file(outPath).exists();
-
-			if (exists) {
+			if (existsSync(outPath)) {
 				console.log(`Skipped:   ${relativePath} (already exists)`);
 				continue;
 			}
@@ -252,8 +251,8 @@ async function traverse(host: string, inDir: string, outDir: string) {
 				console.log(`Processed: ${relativePath}`);
 			} else {
 				// copy non-JSON files unchanged
-				const data = await Bun.file(inPath).arrayBuffer();
-				await Bun.write(outPath, data);
+				const data = await readFile(inPath);
+				await writeFile(outPath, data);
 				console.log(`Copied:    ${relativePath}`);
 			}
 		}

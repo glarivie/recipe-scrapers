@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import { describe, expect, it } from "vitest";
 
 import { ExtractionFailedException, UnsupportedFieldException } from "~/exceptions";
 import type { RecipeFields } from "~/types/recipe.interface";
@@ -6,7 +7,6 @@ import { isIngredients } from "~/utils/ingredients";
 import { isInstructions } from "~/utils/instructions";
 
 import { SchemaOrgException, SchemaOrgPlugin } from "../index";
-import { describe, expect, it } from "bun:test";
 
 const minimalJsonLd = `
 <script type="application/ld+json">

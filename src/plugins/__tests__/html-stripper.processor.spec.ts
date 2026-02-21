@@ -1,8 +1,9 @@
+import { describe, expect, it } from "vitest";
+
 import type { Ingredients, Instructions } from "../../types/recipe.interface";
 import { createIngredientGroup, createIngredientItem } from "../../utils/ingredients";
 import { createInstructionGroup, createInstructionItem } from "../../utils/instructions";
 import { HtmlStripperPlugin } from "../html-stripper.processor";
-import { describe, expect, it } from "bun:test";
 
 describe("HtmlStripperPlugin", () => {
 	const plugin = new HtmlStripperPlugin();

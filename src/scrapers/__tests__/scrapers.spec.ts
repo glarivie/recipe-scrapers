@@ -1,4 +1,7 @@
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { globSync } from "glob";
+import { describe, expect, it } from "vitest";
 import z from "zod";
 
 import { AbstractScraper } from "~/abstract-scraper";
@@ -6,27 +9,21 @@ import { LogLevel } from "~/logger";
 import { scrapers } from "~/scrapers/_index";
 import type { RecipeObject } from "~/types/recipe.interface";
 
-import { describe, expect, it } from "bun:test";
-
 const DATA_DIR = "./test-data";
 
-async function getTestDataFiles() {
-	// Use Bun.glob to find all .testhtml files
-	const glob = new Bun.Glob("**/*.testhtml");
+function getTestDataFiles() {
+	const files = globSync("**/*.testhtml", { cwd: DATA_DIR });
 
 	// Group files by host (directory name)
 	const hostGroups = new Map<string, { html: string[]; json: string[] }>();
 
-	for await (const file of glob.scan(DATA_DIR)) {
-		// The directory name is the host
+	for (const file of files) {
 		const { dir } = path.parse(file);
 		const host = hostGroups.get(dir);
 		const testHtmlPath = path.join(DATA_DIR, file);
 		const testJsonPath = testHtmlPath.replace(".testhtml", ".json");
 
-		const jsonFileExists = await Bun.file(testJsonPath).exists();
-
-		if (!jsonFileExists) {
+		if (!existsSync(testJsonPath)) {
 			console.warn(`Skipping ${testHtmlPath}: corresponding JSON file not found`);
 			continue;
 		}
@@ -45,7 +42,7 @@ async function getTestDataFiles() {
 function runTestSuite(host: string, htmlFiles: string[], jsonFiles: string[]) {
 	const Scraper = scrapers[host];
 
-	describe(`Scraper: ${host}`, async () => {
+	describe(`Scraper: ${host}`, () => {
 		it("should be defined", () => {
 			expect(Scraper).toBeDefined();
 		});
@@ -67,8 +64,8 @@ function runTestSuite(host: string, htmlFiles: string[], jsonFiles: string[]) {
 			const htmlFile = htmlFiles[i];
 			const jsonFile = jsonFiles[i];
 			const { base: fileName } = path.parse(htmlFile);
-			const htmlContent = await Bun.file(htmlFile).text();
-			const expectedData: RecipeObject = await Bun.file(jsonFile).json();
+			const htmlContent = readFileSync(htmlFile, "utf-8");
+			const expectedData: RecipeObject = JSON.parse(readFileSync(jsonFile, "utf-8"));
 
 			describe(fileName, () => {
 				it("should correctly parse and validate the recipe", async () => {
@@ -95,7 +92,7 @@ function runTestSuite(host: string, htmlFiles: string[], jsonFiles: string[]) {
 	});
 }
 
-const testDataFiles = await getTestDataFiles();
+const testDataFiles = getTestDataFiles();
 
 const onlyScraper = ""; //'epicurious.com'
 

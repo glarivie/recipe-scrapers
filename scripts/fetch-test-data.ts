@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const TEMP_DIR = path.resolve(import.meta.dirname, "../.temp");
@@ -41,9 +43,7 @@ async function fetchGitHubTree(
 async function downloadFile(url: string, localPath: string) {
 	try {
 		// Check if file already exists
-		const exists = await Bun.file(localPath).exists();
-
-		if (exists) {
+		if (existsSync(localPath)) {
 			return { path: localPath, success: true, skipped: true };
 		}
 
@@ -58,7 +58,8 @@ async function downloadFile(url: string, localPath: string) {
 		}
 
 		const content = await response.text();
-		await Bun.write(localPath, content);
+		await mkdir(path.dirname(localPath), { recursive: true });
+		await writeFile(localPath, content);
 
 		return { path: localPath, success: true };
 	} catch (error) {

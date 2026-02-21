@@ -1,10 +1,10 @@
 import { load } from "cheerio";
+import { describe, expect, it, vi } from "vitest";
 
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
 import { ExtractorNotFoundException } from "../exceptions";
 import { RecipeExtractor } from "../recipe-extractor";
 import type { RecipeFields } from "../types/recipe.interface";
-import { describe, expect, it, spyOn } from "bun:test";
 
 describe("RecipeExtractor", () => {
 	const scraperName = "TestScraper";
@@ -40,8 +40,8 @@ describe("RecipeExtractor", () => {
 			extract: () => "H1",
 		} as ExtractorPlugin;
 
-		const spyLow = spyOn(low, "extract");
-		const spyHigh = spyOn(high, "extract");
+		const spyLow = vi.spyOn(low, "extract");
+		const spyHigh = vi.spyOn(high, "extract");
 
 		const extractor = new RecipeExtractor([low, high], scraperName);
 		const result = await extractor.extract("title");

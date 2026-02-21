@@ -1,10 +1,10 @@
 import { load } from "cheerio";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { ExtractorNotFoundException } from "~/exceptions";
 import type { RecipeFields } from "~/types/recipe.interface";
 
 import { OpenGraphException, OpenGraphPlugin } from "../opengraph.extractor";
-import { beforeEach, describe, expect, it } from "bun:test";
 
 describe("OpenGraphPlugin", () => {
 	const htmlWithMeta = `

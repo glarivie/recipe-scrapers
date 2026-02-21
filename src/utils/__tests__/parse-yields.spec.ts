@@ -1,5 +1,6 @@
+import { describe, expect, it } from "vitest";
+
 import { parseYields } from "../parse-yields";
-import { describe, expect, it } from "bun:test";
 
 describe("parseYields", () => {
 	it("should throw for empty input", () => {

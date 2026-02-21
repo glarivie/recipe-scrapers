@@ -1,22 +1,23 @@
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+
 import { Logger, LogLevel } from "../logger";
-import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 
 describe("Logger", () => {
 	let consoleSpy: {
-		log: ReturnType<typeof spyOn>;
-		debug: ReturnType<typeof spyOn>;
-		info: ReturnType<typeof spyOn>;
-		warn: ReturnType<typeof spyOn>;
-		error: ReturnType<typeof spyOn>;
+		log: MockInstance;
+		debug: MockInstance;
+		info: MockInstance;
+		warn: MockInstance;
+		error: MockInstance;
 	};
 
 	beforeEach(() => {
 		consoleSpy = {
-			log: spyOn(console, "log").mockImplementation(() => {}),
-			debug: spyOn(console, "debug").mockImplementation(() => {}),
-			info: spyOn(console, "info").mockImplementation(() => {}),
-			warn: spyOn(console, "warn").mockImplementation(() => {}),
-			error: spyOn(console, "error").mockImplementation(() => {}),
+			log: vi.spyOn(console, "log").mockImplementation(() => {}),
+			debug: vi.spyOn(console, "debug").mockImplementation(() => {}),
+			info: vi.spyOn(console, "info").mockImplementation(() => {}),
+			warn: vi.spyOn(console, "warn").mockImplementation(() => {}),
+			error: vi.spyOn(console, "error").mockImplementation(() => {}),
 		};
 	});
 

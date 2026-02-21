@@ -1,11 +1,11 @@
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+
 import { AbstractScraper } from "~/abstract-scraper";
 import { NotImplementedException } from "~/exceptions";
 import { Logger } from "~/logger";
 import type { RecipeFields } from "~/types/recipe.interface";
 import { stringsToIngredients } from "~/utils/ingredients";
 import { stringsToInstructions } from "~/utils/instructions";
-
-import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 
 class DummyScraper extends AbstractScraper {
 	// implement required static host
@@ -50,10 +50,10 @@ describe("AbstractScraper utility methods", () => {
 	});
 
 	describe("language()", () => {
-		let warnSpy: ReturnType<typeof spyOn>;
+		let warnSpy: MockInstance;
 
 		beforeEach(() => {
-			warnSpy = spyOn(Logger.prototype, "warn").mockImplementation(() => {});
+			warnSpy = vi.spyOn(Logger.prototype, "warn").mockImplementation(() => {});
 		});
 		afterEach(() => {
 			warnSpy.mockRestore();

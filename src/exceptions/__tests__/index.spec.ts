@@ -1,9 +1,10 @@
+import { describe, expect, it } from "vitest";
+
 import {
 	ExtractorNotFoundException,
 	NotImplementedException,
 	UnsupportedFieldException,
 } from "../index";
-import { describe, expect, it } from "bun:test";
 
 describe("ExtractorNotFoundException", () => {
 	it("should create error with correct message and name", () => {
