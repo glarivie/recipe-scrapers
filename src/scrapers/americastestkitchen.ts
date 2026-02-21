@@ -1,4 +1,4 @@
-import z from "zod";
+import * as v from "valibot";
 
 import { AbstractScraper } from "~/abstract-scraper";
 import type { Ingredients, RecipeFields } from "~/types/recipe.interface";
@@ -11,59 +11,59 @@ import {
 import { createInstructionGroup, createInstructionItem } from "~/utils/instructions";
 import { normalizeString } from "~/utils/parsing";
 
-const recipeIngredientItemSchema = z.object({
-	fields: z.object({
-		qty: z.string(),
-		preText: z.string(),
-		postText: z.string(),
-		measurement: z.string().nullable(),
-		pluralIngredient: z.boolean(),
-		ingredient: z.object({
-			contentType: z.string(),
-			fields: z.object({
-				title: z.string(),
-				pluralTitle: z.string(),
-				kind: z.string(),
+const recipeIngredientItemSchema = v.object({
+	fields: v.object({
+		qty: v.string(),
+		preText: v.string(),
+		postText: v.string(),
+		measurement: v.nullable(v.string()),
+		pluralIngredient: v.boolean(),
+		ingredient: v.object({
+			contentType: v.string(),
+			fields: v.object({
+				title: v.string(),
+				pluralTitle: v.string(),
+				kind: v.string(),
 			}),
 		}),
 	}),
 });
 
-type RecipeIngredientItem = z.infer<typeof recipeIngredientItemSchema>;
+type RecipeIngredientItem = v.InferOutput<typeof recipeIngredientItemSchema>;
 
-const recipeIngredientGroupSchema = z.object({
-	fields: z.object({
-		title: z.string(),
-		recipeIngredientItems: z.array(recipeIngredientItemSchema),
+const recipeIngredientGroupSchema = v.object({
+	fields: v.object({
+		title: v.string(),
+		recipeIngredientItems: v.array(recipeIngredientItemSchema),
 	}),
 });
 
-const recipeInstructionSchema = z.object({
-	fields: z.object({
-		content: z.string(),
+const recipeInstructionSchema = v.object({
+	fields: v.object({
+		content: v.string(),
 	}),
 });
 
-const recipeDataSchema = z.object({
-	totalCookTime: z.number(),
-	recipeTimeNote: z.string().optional(),
-	ingredientGroups: z.array(recipeIngredientGroupSchema),
-	headnote: z.string().optional(),
-	instructions: z.array(recipeInstructionSchema),
-	metaData: z.object({
-		fields: z.object({
-			photo: z.object({
-				url: z.url(),
+const recipeDataSchema = v.object({
+	totalCookTime: v.number(),
+	recipeTimeNote: v.optional(v.string()),
+	ingredientGroups: v.array(recipeIngredientGroupSchema),
+	headnote: v.optional(v.string()),
+	instructions: v.array(recipeInstructionSchema),
+	metaData: v.object({
+		fields: v.object({
+			photo: v.object({
+				url: v.pipe(v.string(), v.url()),
 			}),
 		}),
 	}),
 });
 
-type RecipeData = z.infer<typeof recipeDataSchema>;
+type RecipeData = v.InferOutput<typeof recipeDataSchema>;
 
-const pagePropsDataSchema = z.object({
-	props: z.object({
-		pageProps: z.object({
+const pagePropsDataSchema = v.object({
+	props: v.object({
+		pageProps: v.object({
 			data: recipeDataSchema,
 		}),
 	}),
@@ -171,7 +171,7 @@ export class AmericasTestKitchen extends AbstractScraper {
 			}
 
 			try {
-				const parsed = pagePropsDataSchema.parse(JSON.parse(jsonString));
+				const parsed = v.parse(pagePropsDataSchema, JSON.parse(jsonString));
 				this.data = parsed.props.pageProps.data;
 			} catch (error) {
 				this.logger.error("Failed to parse JSON data:", error);

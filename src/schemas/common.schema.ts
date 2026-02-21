@@ -1,30 +1,49 @@
-import { z } from "zod";
+import * as v from "valibot";
 
 const MAX_STRING_LENGTH = 5000;
 
+const HOSTNAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
+
 /**
  * Helper to create a required, non-empty string field
- * Note: Returns the base ZodString so additional methods can be chained
  */
-export const zString = (fieldName: string, { min = 1, max = 0 } = {}) =>
-	z
-		.string(`${fieldName} must be a string`)
-		.min(min, `${fieldName} cannot be empty`)
-		.max(max > 0 ? max : MAX_STRING_LENGTH, `${fieldName} must be less than ${max} characters`)
-		.transform((s) => s.trim());
+export const vString = (fieldName: string, { min = 1, max = 0 } = {}) =>
+	v.pipe(
+		v.string(`${fieldName} must be a string`),
+		v.minLength(min, `${fieldName} cannot be empty`),
+		v.maxLength(
+			max > 0 ? max : MAX_STRING_LENGTH,
+			`${fieldName} must be less than ${max} characters`,
+		),
+		v.transform((s) => s.trim()),
+	);
 
 /**
  * Helper to create a URL string field
  */
-export const zHttpUrl = (fieldName: string) => z.httpUrl(`${fieldName} must be a valid URL`);
+export const vHttpUrl = (fieldName: string) =>
+	v.pipe(v.string(`${fieldName} must be a valid URL`), v.url(`${fieldName} must be a valid URL`));
+
+/**
+ * Helper to create a hostname field
+ */
+export const vHostname = (message: string) =>
+	v.pipe(v.string(message), v.regex(HOSTNAME_REGEX, message));
 
 /**
  * Helper to create a positive integer field
  */
-export const zPositiveInteger = (fieldName: string) =>
-	z.int(`${fieldName} must be an integer`).positive(`${fieldName} must be positive`).nullable();
+export const vPositiveInteger = (fieldName: string) =>
+	v.nullable(
+		v.pipe(
+			v.number(`${fieldName} must be an integer`),
+			v.integer(`${fieldName} must be an integer`),
+			v.minValue(1, `${fieldName} must be positive`),
+		),
+	);
 
-export const zNonEmptyArray = <T extends z.ZodType>(schema: T, fieldName: string) =>
-	z
-		.array(schema, `${fieldName} items must be an array`)
-		.min(1, `${fieldName} group must have at least one item`);
+export const vNonEmptyArray = <T extends v.GenericSchema>(schema: T, fieldName: string) =>
+	v.pipe(
+		v.array(schema, `${fieldName} items must be an array`),
+		v.minLength(1, `${fieldName} group must have at least one item`),
+	);

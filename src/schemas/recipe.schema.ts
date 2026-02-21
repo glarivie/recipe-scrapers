@@ -1,8 +1,8 @@
-import { z } from "zod";
+import * as v from "valibot";
 
 import { isNull } from "~/utils";
 
-import { zHttpUrl, zNonEmptyArray, zPositiveInteger, zString } from "./common.schema";
+import { vHostname, vHttpUrl, vNonEmptyArray, vPositiveInteger, vString } from "./common.schema";
 
 /**
  * Current schema version for recipe objects.
@@ -18,222 +18,192 @@ export const RECIPE_SCHEMA_VERSION = "1.0.0" as const;
  * This represents the structured data extracted from an ingredient string.
  * @see https://github.com/jakeboone02/parse-ingredient
  */
-export const ParsedIngredientSchema = z.object({
+export const ParsedIngredientSchema = v.object({
 	/** The primary quantity (the lower quantity in a range, if applicable) */
-	quantity: z.number().nullable(),
+	quantity: v.nullable(v.number()),
 	/** The secondary quantity (the upper quantity in a range, or null if not
 	 * applicable) */
-	quantity2: z.number().nullable(),
+	quantity2: v.nullable(v.number()),
 	/** The unit of measure identifier (normalized key) */
-	unitOfMeasureID: z.string().nullable(),
+	unitOfMeasureID: v.nullable(v.string()),
 	/** The unit of measure as written in the ingredient string */
-	unitOfMeasure: z.string().nullable(),
+	unitOfMeasure: v.nullable(v.string()),
 	/** The ingredient description (name of the ingredient) */
-	description: z.string(),
+	description: v.string(),
 	/** Whether the "ingredient" is actually a group header, e.g. "For icing:" */
-	isGroupHeader: z.boolean(),
+	isGroupHeader: v.boolean(),
 });
 
 /**
  * Schema for a single ingredient item
  */
-export const IngredientItemSchema = z.object({
-	value: zString("Ingredient value"),
+export const IngredientItemSchema = v.object({
+	value: vString("Ingredient value"),
 	/**
 	 * Parsed ingredient data from the parse-ingredient library.
 	 * Only present when parsing is enabled via `parseIngredients` option.
 	 */
-	parsed: ParsedIngredientSchema.optional().nullable(),
+	parsed: v.optional(v.nullable(ParsedIngredientSchema)),
 });
 
 /**
  * Schema for a group of ingredients
  */
-export const IngredientGroupSchema = z.object({
-	name: zString("Ingredient group name").nullable(),
-	items: zNonEmptyArray(IngredientItemSchema, "Ingredient"),
+export const IngredientGroupSchema = v.object({
+	name: v.nullable(vString("Ingredient group name")),
+	items: vNonEmptyArray(IngredientItemSchema, "Ingredient"),
 });
 
 /**
  * Schema for all recipe ingredients
  * Must have at least one group with at least one ingredient
  */
-export const IngredientsSchema = z
-	.array(IngredientGroupSchema, "Ingredients must be an array")
-	.min(1, "Recipe must have at least one ingredient group");
+export const IngredientsSchema = v.pipe(
+	v.array(IngredientGroupSchema, "Ingredients must be an array"),
+	v.minLength(1, "Recipe must have at least one ingredient group"),
+);
 
 /**
  * Schema for a single instruction step
  */
-export const InstructionItemSchema = z.object({
-	value: zString("Instruction value"),
+export const InstructionItemSchema = v.object({
+	value: vString("Instruction value"),
 });
 
 /**
  * Schema for a group of instruction steps
  */
-export const InstructionGroupSchema = z.object({
-	name: zString("Instruction group name").nullable(),
-	items: zNonEmptyArray(InstructionItemSchema, "Instruction"),
+export const InstructionGroupSchema = v.object({
+	name: v.nullable(vString("Instruction group name")),
+	items: vNonEmptyArray(InstructionItemSchema, "Instruction"),
 });
 
 /**
  * Schema for all recipe instructions
  * Must have at least one group with at least one step
  */
-export const InstructionsSchema = z
-	.array(InstructionGroupSchema, "Instructions must be an array")
-	.min(1, "Recipe must have at least one instruction group");
+export const InstructionsSchema = v.pipe(
+	v.array(InstructionGroupSchema, "Instructions must be an array"),
+	v.minLength(1, "Recipe must have at least one instruction group"),
+);
 
 /**
  * Schema for a link object
  */
-export const LinkSchema = z.object({
-	href: zHttpUrl("Link href"),
-	text: zString("Link text"),
+export const LinkSchema = v.object({
+	href: vHttpUrl("Link href"),
+	text: vString("Link text"),
 });
 
 /**
  * Base RecipeObject schema without cross-field validations.
- * Use this schema when you need to extend the recipe object with custom fields.
- *
- * @example
- * ```ts
- * import { RecipeObjectBaseSchema, applyRecipeValidations } from 'recipe-scrapers-js'
- *
- * const MyCustomRecipeSchema = RecipeObjectBaseSchema.extend({
- *   customField: z.string(),
- * })
- *
- * // Apply the standard recipe validations
- * const MyValidatedRecipeSchema = applyRecipeValidations(MyCustomRecipeSchema)
- * ```
  */
-export const RecipeObjectBaseSchema = z.object({
+export const RecipeObjectBaseSchema = v.object({
 	// Schema version for migrations
-	schemaVersion: z
-		.literal(RECIPE_SCHEMA_VERSION)
-		.default(RECIPE_SCHEMA_VERSION)
-		.describe("Schema version for recipe data migrations"),
+	schemaVersion: v.optional(v.literal(RECIPE_SCHEMA_VERSION), RECIPE_SCHEMA_VERSION),
 
 	// Required fields
-	host: z.hostname("Host must be a valid hostname"),
+	host: vHostname("Host must be a valid hostname"),
 
-	title: zString("Title", { max: 500 }),
+	title: vString("Title", { max: 500 }),
 
-	author: zString("Author", { max: 255 }),
+	author: vString("Author", { max: 255 }),
 
 	ingredients: IngredientsSchema,
 	instructions: InstructionsSchema,
 
 	// URL fields
-	canonicalUrl: zHttpUrl("Canonical URL"),
-	image: zHttpUrl("Image"),
+	canonicalUrl: vHttpUrl("Canonical URL"),
+	image: vHttpUrl("Image"),
 
 	// Time fields (in minutes)
-	totalTime: zPositiveInteger("Total time"),
-	cookTime: zPositiveInteger("Cook time"),
-	prepTime: zPositiveInteger("Prep time"),
+	totalTime: vPositiveInteger("Total time"),
+	cookTime: vPositiveInteger("Cook time"),
+	prepTime: vPositiveInteger("Prep time"),
 
 	// Ratings
-	ratings: z
-		.number("Ratings must be a number")
-		.min(0, "Ratings must be at least 0")
-		.max(5, "Ratings must be at most 5")
-		.default(0),
+	ratings: v.optional(
+		v.pipe(
+			v.number("Ratings must be a number"),
+			v.minValue(0, "Ratings must be at least 0"),
+			v.maxValue(5, "Ratings must be at most 5"),
+		),
+		0,
+	),
 
-	ratingsCount: z
-		.int("Ratings count must be an integer")
-		.nonnegative("Ratings count must be non-negative")
-		.default(0),
+	ratingsCount: v.optional(
+		v.pipe(
+			v.number("Ratings count must be a number"),
+			v.integer("Ratings count must be an integer"),
+			v.minValue(0, "Ratings count must be non-negative"),
+		),
+		0,
+	),
 
 	// String fields
-	yields: zString("Yields"),
-	description: zString("Description"),
+	yields: vString("Yields"),
+	description: vString("Description"),
 
-	language: zString("Language", { min: 2 }).optional().default("en"),
+	language: v.optional(vString("Language", { min: 2 }), "en"),
 
-	siteName: zString("Site name").nullable(),
+	siteName: v.nullable(vString("Site name")),
 
-	cookingMethod: zString("Cooking method").nullable(),
+	cookingMethod: v.nullable(vString("Cooking method")),
 
 	// List fields
-	category: z.array(zString("Category item"), "Category must be an array").default([]),
+	category: v.optional(v.array(vString("Category item"), "Category must be an array"), []),
 
-	cuisine: z.array(zString("Cuisine item"), "Cuisine must be an array").default([]),
+	cuisine: v.optional(v.array(vString("Cuisine item"), "Cuisine must be an array"), []),
 
-	keywords: z.array(zString("Keyword item"), "Keywords must be an array").default([]),
+	keywords: v.optional(v.array(vString("Keyword item"), "Keywords must be an array"), []),
 
-	dietaryRestrictions: z
-		.array(zString("Dietary restriction item"), "Dietary restrictions must be an array")
-		.default([]),
+	dietaryRestrictions: v.optional(
+		v.array(vString("Dietary restriction item"), "Dietary restrictions must be an array"),
+		[],
+	),
 
-	equipment: z.array(zString("Equipment item"), "Equipment must be an array").default([]),
+	equipment: v.optional(v.array(vString("Equipment item"), "Equipment must be an array"), []),
 
-	links: z.array(LinkSchema, "Links must be an array").optional(),
+	links: v.optional(v.array(LinkSchema, "Links must be an array")),
 
 	// Complex fields
-	nutrients: z.record(z.string(), z.string(), "Nutrients must be an object").default({}),
+	nutrients: v.optional(
+		v.record(v.string(), v.string(), "Nutrients must be an object"),
+		() => ({}),
+	),
 
-	reviews: z.record(z.string(), z.string(), "Reviews must be an object").default({}),
+	reviews: v.optional(v.record(v.string(), v.string(), "Reviews must be an object"), () => ({})),
 });
+
+type RecipeObjectBase = v.InferOutput<typeof RecipeObjectBaseSchema>;
 
 /**
  * Applies recipe-specific transformations and validations to a schema.
- * Use this when extending RecipeObjectBaseSchema with custom fields.
- *
- * @param schema - A Zod object schema that includes
- * all RecipeObjectBaseSchema fields
- * @returns A schema with transforms and field validations applied
- *
- * @example
- * ```ts
- * const CustomSchema = RecipeObjectBaseSchema.extend({
- *   tags: z.array(z.string()),
- * })
- *
- * const ValidatedCustomSchema = applyRecipeValidations(CustomSchema)
- * ```
  */
-export function applyRecipeValidations<T extends z.infer<typeof RecipeObjectBaseSchema>>(
-	schema: z.ZodType<T>,
-) {
-	return schema
-		.transform((data) => {
+export function applyRecipeValidations(schema: v.GenericSchema<unknown, RecipeObjectBase>) {
+	return v.pipe(
+		schema,
+		v.transform((data) => {
 			// Auto-fix: calculate totalTime if missing but cook and prep times exist
 			if (!data.totalTime && !isNull(data.cookTime) && !isNull(data.prepTime)) {
 				data.totalTime = data.cookTime + data.prepTime;
 			}
 			return data;
-		})
-		.refine(
-			({ totalTime, cookTime, prepTime }) => {
-				if (!isNull(totalTime) && !isNull(cookTime) && !isNull(prepTime)) {
-					return totalTime >= cookTime + prepTime;
-				}
-				return true;
-			},
-			{
-				message: "Total time should be at least the sum of cook time and prep time",
-				path: ["totalTime"],
-			},
-		)
-		.refine(
-			(data) => {
-				return data.ratings === 0 || data.ratingsCount > 0;
-			},
-			{
-				message: "Ratings count should be greater than 0 when ratings exist",
-				path: ["ratingsCount"],
-			},
-		);
+		}),
+		v.check(({ totalTime, cookTime, prepTime }) => {
+			if (!isNull(totalTime) && !isNull(cookTime) && !isNull(prepTime)) {
+				return totalTime >= cookTime + prepTime;
+			}
+			return true;
+		}, "Total time should be at least the sum of cook time and prep time"),
+		v.check((data) => {
+			return data.ratings === 0 || data.ratingsCount > 0;
+		}, "Ratings count should be greater than 0 when ratings exist"),
+	);
 }
 
 /**
  * Strict RecipeObject schema with all validations enforced.
  * This is the standard schema used by recipe scrapers.
- *
- * For custom extensions, use RecipeObjectBaseSchema.extend() and then
- * apply validations with applyRecipeValidations().
  */
 export const RecipeObjectSchema = applyRecipeValidations(RecipeObjectBaseSchema);

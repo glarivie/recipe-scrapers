@@ -228,7 +228,9 @@ describe("AbstractScraper.toRecipeObject", () => {
 		const result = await scraper.safeParse();
 		expect(result.success).toBe(false);
 		if (!result.success) {
-			expect(result.error.issues.some((issue) => issue.path[0] === "image")).toBe(true);
+			expect(
+				result.issues.some((issue) => issue.path?.some((p) => "key" in p && p.key === "image")),
+			).toBe(true);
 		}
 	});
 });

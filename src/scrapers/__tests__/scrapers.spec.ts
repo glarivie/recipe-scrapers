@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { globSync } from "glob";
+import * as v from "valibot";
 import { describe, expect, it } from "vitest";
-import z from "zod";
 
 import { AbstractScraper } from "~/abstract-scraper";
 import { LogLevel } from "~/logger";
@@ -78,13 +78,13 @@ function runTestSuite(host: string, htmlFiles: string[], jsonFiles: string[]) {
 					const parsedResult = await scraper.safeParse();
 
 					if (!parsedResult.success) {
-						console.error(z.prettifyError(parsedResult.error));
+						console.error(JSON.stringify(v.flatten(parsedResult.issues), null, 2));
 					}
 
 					expect(parsedResult.success).toBe(true);
 
 					if (parsedResult.success) {
-						expect(parsedResult.data).toMatchObject(expectedData);
+						expect(parsedResult.output).toMatchObject(expectedData);
 					}
 				});
 			});

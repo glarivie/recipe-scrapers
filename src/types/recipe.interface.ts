@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type * as v from "valibot";
 
 import type {
 	IngredientGroupSchema,
@@ -15,17 +15,17 @@ export type List = Set<string>;
 /**
  * Parsed ingredient data from the parse-ingredient library
  */
-export type ParsedIngredient = z.infer<typeof ParsedIngredientSchema>;
+export type ParsedIngredient = v.InferOutput<typeof ParsedIngredientSchema>;
 
 /**
  * A single ingredient item
  */
-export type IngredientItem = z.infer<typeof IngredientItemSchema>;
+export type IngredientItem = v.InferOutput<typeof IngredientItemSchema>;
 
 /**
  * A group of ingredients with an optional group name
  */
-export type IngredientGroup = z.infer<typeof IngredientGroupSchema>;
+export type IngredientGroup = v.InferOutput<typeof IngredientGroupSchema>;
 
 /**
  * All recipe ingredients as an array of groups
@@ -35,12 +35,12 @@ export type Ingredients = IngredientGroup[];
 /**
  * A single instruction step
  */
-export type InstructionItem = z.infer<typeof InstructionItemSchema>;
+export type InstructionItem = v.InferOutput<typeof InstructionItemSchema>;
 
 /**
  * A group of instruction steps with an optional group name
  */
-export type InstructionGroup = z.infer<typeof InstructionGroupSchema>;
+export type InstructionGroup = v.InferOutput<typeof InstructionGroupSchema>;
 
 /**
  * All recipe instructions as an array of groups
@@ -50,12 +50,12 @@ export type Instructions = InstructionGroup[];
 /**
  * The complete recipe object
  */
-export type RecipeObject = z.infer<typeof RecipeObjectSchema>;
+export type RecipeObject = v.InferOutput<typeof RecipeObjectSchema>;
 
 /**
  * A link with href and display text
  */
-export type Link = z.infer<typeof LinkSchema>;
+export type Link = v.InferOutput<typeof LinkSchema>;
 
 export interface RecipeData {
 	/**

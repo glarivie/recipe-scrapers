@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { ParseIngredientOptions } from "parse-ingredient";
-import type z from "zod";
+import * as v from "valibot";
 
 import { RecipeObjectSchema } from "~/schemas/recipe.schema";
 
@@ -242,7 +242,7 @@ export abstract class AbstractScraper {
 	async parse(): Promise<RecipeObject> {
 		const raw = await this.toRecipeObject();
 		const schema = this.getSchema();
-		return schema.parse(raw);
+		return v.parse(schema, raw);
 	}
 
 	/**
@@ -251,9 +251,9 @@ export abstract class AbstractScraper {
 	 *
 	 * @returns Result object with either data or error
 	 */
-	async safeParse(): Promise<z.ZodSafeParseResult<RecipeObject>> {
+	async safeParse(): Promise<v.SafeParseResult<typeof RecipeObjectSchema>> {
 		const raw = await this.toRecipeObject();
 		const schema = this.getSchema();
-		return schema.safeParse(raw);
+		return v.safeParse(schema, raw);
 	}
 }
