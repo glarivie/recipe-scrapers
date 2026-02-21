@@ -1,9 +1,9 @@
-import { AbstractScraper } from "@/abstract-scraper";
-import { NoIngredientsFoundException } from "@/exceptions";
-import type { RecipeFields } from "@/types/recipe.interface";
-import { flattenIngredients, groupIngredients } from "@/utils/ingredients";
-import { createInstructionGroup, createInstructionItem } from "@/utils/instructions";
-import { normalizeString } from "@/utils/parsing";
+import { AbstractScraper } from "~/abstract-scraper";
+import { NoIngredientsFoundException } from "~/exceptions";
+import type { RecipeFields } from "~/types/recipe.interface";
+import { flattenIngredients, groupIngredients } from "~/utils/ingredients";
+import { createInstructionGroup, createInstructionItem } from "~/utils/instructions";
+import { normalizeString } from "~/utils/parsing";
 
 /**
  * Filters out ingredient group headers from a list of ingredient values.

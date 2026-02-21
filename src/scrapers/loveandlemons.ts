@@ -1,4 +1,4 @@
-import { AbstractScraper } from "@/abstract-scraper";
+import { AbstractScraper } from "~/abstract-scraper";
 
 export class LoveAndLemons extends AbstractScraper {
 	static host() {

@@ -1,14 +1,15 @@
 import z from "zod";
-import { AbstractScraper } from "@/abstract-scraper";
-import type { Ingredients, RecipeFields } from "@/types/recipe.interface";
+
+import { AbstractScraper } from "~/abstract-scraper";
+import type { Ingredients, RecipeFields } from "~/types/recipe.interface";
 import {
 	createIngredientGroup,
 	createIngredientItem,
 	flattenIngredients,
 	groupIngredients,
-} from "@/utils/ingredients";
-import { createInstructionGroup, createInstructionItem } from "@/utils/instructions";
-import { normalizeString } from "@/utils/parsing";
+} from "~/utils/ingredients";
+import { createInstructionGroup, createInstructionItem } from "~/utils/instructions";
+import { normalizeString } from "~/utils/parsing";
 
 const recipeIngredientItemSchema = z.object({
 	fields: z.object({

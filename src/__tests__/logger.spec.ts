@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { Logger, LogLevel } from "../logger";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 
 describe("Logger", () => {
 	let consoleSpy: {

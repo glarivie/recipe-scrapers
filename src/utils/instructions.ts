@@ -1,4 +1,5 @@
-import type { InstructionGroup, InstructionItem, Instructions } from "@/types/recipe.interface";
+import type { InstructionGroup, InstructionItem, Instructions } from "~/types/recipe.interface";
+
 import { isPlainObject, isString } from "./index";
 import { splitToList } from "./parsing";
 

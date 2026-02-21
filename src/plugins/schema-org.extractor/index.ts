@@ -1,20 +1,22 @@
 import type { CheerioAPI } from "cheerio";
 import { jsonrepair } from "jsonrepair";
 import type { AggregateRating } from "schema-dts";
-import { ExtractorPlugin } from "@/abstract-extractor-plugin";
-import { ExtractionFailedException, UnsupportedFieldException } from "@/exceptions";
-import { Logger, type LogLevel } from "@/logger";
-import type { RecipeFields } from "@/types/recipe.interface";
-import { isFunction, isNumber, isPlainObject, isString } from "@/utils";
-import { stringsToIngredients } from "@/utils/ingredients";
+
+import { ExtractorPlugin } from "~/abstract-extractor-plugin";
+import { ExtractionFailedException, UnsupportedFieldException } from "~/exceptions";
+import { Logger, type LogLevel } from "~/logger";
+import type { RecipeFields } from "~/types/recipe.interface";
+import { isFunction, isNumber, isPlainObject, isString } from "~/utils";
+import { stringsToIngredients } from "~/utils/ingredients";
 import {
 	createInstructionGroup,
 	createInstructionItem,
 	splitInstructions,
-} from "@/utils/instructions";
-import { extractRecipeMicrodata } from "@/utils/microdata";
-import { parseYields } from "@/utils/parse-yields";
-import { normalizeString, parseMinutes, splitToList } from "@/utils/parsing";
+} from "~/utils/instructions";
+import { extractRecipeMicrodata } from "~/utils/microdata";
+import { parseYields } from "~/utils/parse-yields";
+import { normalizeString, parseMinutes, splitToList } from "~/utils/parsing";
+
 import type { Person, SchemaOrgData, Recipe as SchemaRecipe, Thing } from "./schema-org.interface";
 import {
 	hasId,

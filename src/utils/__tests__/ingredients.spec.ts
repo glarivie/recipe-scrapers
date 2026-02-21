@@ -1,6 +1,7 @@
-import { describe, expect, it } from "bun:test";
 import * as cheerio from "cheerio";
-import type { Ingredients } from "@/types/recipe.interface";
+
+import type { Ingredients } from "~/types/recipe.interface";
+
 import {
 	bestMatch,
 	createIngredientGroup,
@@ -12,6 +13,7 @@ import {
 	scoreSentenceSimilarity,
 	stringsToIngredients,
 } from "../ingredients";
+import { describe, expect, it } from "bun:test";
 
 /** Helper to get ingredient values from a result */
 function getGroupValues(result: Ingredients, groupName: string | null): string[] {

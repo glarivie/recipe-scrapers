@@ -1,7 +1,7 @@
-import { AbstractScraper } from "@/abstract-scraper";
-import { NoIngredientsFoundException } from "@/exceptions";
-import type { RecipeFields } from "@/types/recipe.interface";
-import { flattenIngredients, groupIngredients } from "@/utils/ingredients";
+import { AbstractScraper } from "~/abstract-scraper";
+import { NoIngredientsFoundException } from "~/exceptions";
+import type { RecipeFields } from "~/types/recipe.interface";
+import { flattenIngredients, groupIngredients } from "~/utils/ingredients";
 
 export class ThePioneerWoman extends AbstractScraper {
 	static host() {

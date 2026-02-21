@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { isNull } from "@/utils";
+
+import { isNull } from "~/utils";
+
 import { zHttpUrl, zNonEmptyArray, zPositiveInteger, zString } from "./common.schema";
 
 /**

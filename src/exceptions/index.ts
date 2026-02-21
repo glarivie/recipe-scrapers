@@ -1,4 +1,4 @@
-import { isDefined } from "@/utils";
+import { isDefined } from "~/utils";
 
 export class ExtractorNotFoundException extends Error {
 	constructor(field: string) {

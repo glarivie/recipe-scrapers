@@ -1,4 +1,5 @@
-import type { AbstractScraper } from "@/abstract-scraper";
+import type { AbstractScraper } from "~/abstract-scraper";
+
 import { AllRecipes } from "./allrecipes";
 import { AmericasTestKitchen } from "./americastestkitchen";
 import { BBCFood } from "./bbcfood";

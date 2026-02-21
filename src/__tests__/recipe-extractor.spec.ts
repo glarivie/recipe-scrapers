@@ -1,9 +1,10 @@
-import { describe, expect, it, spyOn } from "bun:test";
 import { load } from "cheerio";
+
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
 import { ExtractorNotFoundException } from "../exceptions";
 import { RecipeExtractor } from "../recipe-extractor";
 import type { RecipeFields } from "../types/recipe.interface";
+import { describe, expect, it, spyOn } from "bun:test";
 
 describe("RecipeExtractor", () => {
 	const scraperName = "TestScraper";

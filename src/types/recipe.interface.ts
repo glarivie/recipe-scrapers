@@ -1,4 +1,5 @@
 import type { z } from "zod";
+
 import type {
 	IngredientGroupSchema,
 	IngredientItemSchema,
@@ -7,7 +8,7 @@ import type {
 	LinkSchema,
 	ParsedIngredientSchema,
 	RecipeObjectSchema,
-} from "@/schemas/recipe.schema";
+} from "~/schemas/recipe.schema";
 
 export type List = Set<string>;
 

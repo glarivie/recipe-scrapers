@@ -8,7 +8,12 @@
 	"assist": {
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [[":NODE:", ":PACKAGE:"], ":BLANK_LINE:", ":ALIAS:", ":BLANK_LINE:", ":PATH:"]
+					}
+				}
 			}
 		}
 	},

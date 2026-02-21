@@ -1,7 +1,8 @@
 import { type ParseIngredientOptions, parseIngredient } from "parse-ingredient";
-import { PostProcessorPlugin } from "@/abstract-postprocessor-plugin";
-import type { IngredientItem, Ingredients, RecipeFields } from "@/types/recipe.interface";
-import { isIngredients } from "@/utils/ingredients";
+
+import { PostProcessorPlugin } from "~/abstract-postprocessor-plugin";
+import type { IngredientItem, Ingredients, RecipeFields } from "~/types/recipe.interface";
+import { isIngredients } from "~/utils/ingredients";
 
 /**
  * Post-processor plugin that parses ingredient strings into structured data.

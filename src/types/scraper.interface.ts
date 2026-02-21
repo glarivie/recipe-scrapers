@@ -1,7 +1,8 @@
 import type { ParseIngredientOptions } from "parse-ingredient";
-import type { ExtractorPlugin } from "@/abstract-extractor-plugin";
-import type { PostProcessorPlugin } from "@/abstract-postprocessor-plugin";
-import type { LogLevel } from "@/logger";
+
+import type { ExtractorPlugin } from "~/abstract-extractor-plugin";
+import type { PostProcessorPlugin } from "~/abstract-postprocessor-plugin";
+import type { LogLevel } from "~/logger";
 
 export interface ScraperOptions {
 	/**

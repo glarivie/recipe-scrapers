@@ -1,4 +1,5 @@
 import path from "node:path";
+
 import { LogLevel } from "../src/logger";
 import { scrapers } from "../src/scrapers/_index";
 

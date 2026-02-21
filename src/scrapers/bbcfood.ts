@@ -1,5 +1,5 @@
-import { AbstractScraper } from "@/abstract-scraper";
-import type { RecipeFields } from "@/types/recipe.interface";
+import { AbstractScraper } from "~/abstract-scraper";
+import type { RecipeFields } from "~/types/recipe.interface";
 
 export class BBCFood extends AbstractScraper {
 	static host() {

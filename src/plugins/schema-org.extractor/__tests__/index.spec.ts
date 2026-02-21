@@ -1,10 +1,12 @@
-import { describe, expect, it } from "bun:test";
 import { load } from "cheerio";
-import { ExtractionFailedException, UnsupportedFieldException } from "@/exceptions";
-import type { RecipeFields } from "@/types/recipe.interface";
-import { isIngredients } from "@/utils/ingredients";
-import { isInstructions } from "@/utils/instructions";
+
+import { ExtractionFailedException, UnsupportedFieldException } from "~/exceptions";
+import type { RecipeFields } from "~/types/recipe.interface";
+import { isIngredients } from "~/utils/ingredients";
+import { isInstructions } from "~/utils/instructions";
+
 import { SchemaOrgException, SchemaOrgPlugin } from "../index";
+import { describe, expect, it } from "bun:test";
 
 const minimalJsonLd = `
 <script type="application/ld+json">

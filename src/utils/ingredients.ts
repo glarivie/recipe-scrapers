@@ -1,5 +1,7 @@
 import type { CheerioAPI } from "cheerio";
-import type { IngredientGroup, IngredientItem, Ingredients } from "@/types/recipe.interface";
+
+import type { IngredientGroup, IngredientItem, Ingredients } from "~/types/recipe.interface";
+
 import { isPlainObject, isString } from "./index";
 import { normalizeString } from "./parsing";
 

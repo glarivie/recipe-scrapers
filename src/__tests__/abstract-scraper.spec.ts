@@ -1,10 +1,11 @@
+import { AbstractScraper } from "~/abstract-scraper";
+import { NotImplementedException } from "~/exceptions";
+import { Logger } from "~/logger";
+import type { RecipeFields } from "~/types/recipe.interface";
+import { stringsToIngredients } from "~/utils/ingredients";
+import { stringsToInstructions } from "~/utils/instructions";
+
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { AbstractScraper } from "@/abstract-scraper";
-import { NotImplementedException } from "@/exceptions";
-import { Logger } from "@/logger";
-import type { RecipeFields } from "@/types/recipe.interface";
-import { stringsToIngredients } from "@/utils/ingredients";
-import { stringsToInstructions } from "@/utils/instructions";
 
 class DummyScraper extends AbstractScraper {
 	// implement required static host

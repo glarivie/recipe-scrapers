@@ -1,4 +1,3 @@
-import { describe, expect, it } from "bun:test";
 import {
 	createInstructionGroup,
 	createInstructionItem,
@@ -9,6 +8,7 @@ import {
 	splitInstructions,
 	stringsToInstructions,
 } from "../instructions";
+import { describe, expect, it } from "bun:test";
 
 describe("createInstructionItem", () => {
 	it("creates an instruction item with value", () => {

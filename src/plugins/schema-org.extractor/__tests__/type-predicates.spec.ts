@@ -1,4 +1,3 @@
-import { describe, expect, it } from "bun:test";
 import {
 	hasId,
 	isAggregateRating,
@@ -15,6 +14,7 @@ import {
 	isWebPage,
 	isWebSite,
 } from "../type-predicates";
+import { describe, expect, it } from "bun:test";
 
 describe("type-predicates", () => {
 	describe("hasId", () => {

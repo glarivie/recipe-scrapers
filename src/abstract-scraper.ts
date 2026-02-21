@@ -1,7 +1,9 @@
 import * as cheerio from "cheerio";
 import type { ParseIngredientOptions } from "parse-ingredient";
 import type z from "zod";
-import { RecipeObjectSchema } from "@/schemas/recipe.schema";
+
+import { RecipeObjectSchema } from "~/schemas/recipe.schema";
+
 import type { ExtractorPlugin } from "./abstract-extractor-plugin";
 import type { PostProcessorPlugin } from "./abstract-postprocessor-plugin";
 import { NotImplementedException } from "./exceptions";

@@ -1,5 +1,5 @@
-import { describe, expect, expectTypeOf, it } from "bun:test";
-import type { RecipeObject } from "@/types/recipe.interface";
+import type { RecipeObject } from "~/types/recipe.interface";
+
 import {
 	IngredientGroupSchema,
 	IngredientItemSchema,
@@ -11,6 +11,7 @@ import {
 	RECIPE_SCHEMA_VERSION,
 	RecipeObjectSchema,
 } from "../recipe.schema";
+import { describe, expect, expectTypeOf, it } from "bun:test";
 
 describe("IngredientItemSchema", () => {
 	it("should validate a valid ingredient item", () => {

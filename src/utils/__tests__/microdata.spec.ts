@@ -1,6 +1,7 @@
-import { describe, expect, it } from "bun:test";
 import * as cheerio from "cheerio";
+
 import { extractRecipeMicrodata } from "../microdata";
+import { describe, expect, it } from "bun:test";
 
 describe("microdata-extractor", () => {
 	it("should extract simple microdata properties", () => {
