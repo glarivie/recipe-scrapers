@@ -1,11 +1,11 @@
-import type { CheerioAPI } from 'cheerio'
+import type { CheerioAPI } from "cheerio";
 
 export abstract class AbstractPlugin {
-  /** The name of the plugin */
-  abstract name: string
+	/** The name of the plugin */
+	abstract name: string;
 
-  /** The priority of the plugin */
-  abstract priority: number
+	/** The priority of the plugin */
+	abstract priority: number;
 
-  constructor(readonly $: CheerioAPI) {}
+	constructor(readonly $: CheerioAPI) {}
 }

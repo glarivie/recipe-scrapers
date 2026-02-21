@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class Marmiton extends AbstractScraper {
-  static host() {
-    return 'marmiton.org'
-  }
+	static host() {
+		return "marmiton.org";
+	}
 
-  extractors = {}
+	extractors = {};
 }

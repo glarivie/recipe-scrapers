@@ -1,28 +1,28 @@
-import { describe, expect, it } from 'bun:test'
-import * as cheerio from 'cheerio'
-import { extractRecipeMicrodata } from '../microdata'
+import { describe, expect, it } from "bun:test";
+import * as cheerio from "cheerio";
+import { extractRecipeMicrodata } from "../microdata";
 
-describe('microdata-extractor', () => {
-  it('should extract simple microdata properties', () => {
-    const html = `
+describe("microdata-extractor", () => {
+	it("should extract simple microdata properties", () => {
+		const html = `
       <div itemtype="https://schema.org/Recipe">
         <h1 itemprop="name">Test Recipe</h1>
         <meta itemprop="prepTime" content="PT15M">
       </div>
-    `
-    const $ = cheerio.load(html)
-    const result = extractRecipeMicrodata($)
+    `;
+		const $ = cheerio.load(html);
+		const result = extractRecipeMicrodata($);
 
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({
-      '@type': 'Recipe',
-      name: 'Test Recipe',
-      prepTime: 'PT15M',
-    })
-  })
+		expect(result).toHaveLength(1);
+		expect(result[0]).toEqual({
+			"@type": "Recipe",
+			name: "Test Recipe",
+			prepTime: "PT15M",
+		});
+	});
 
-  it('should extract nested microdata objects', () => {
-    const html = `
+	it("should extract nested microdata objects", () => {
+		const html = `
       <div itemtype="https://schema.org/Recipe">
         <h1 itemprop="name">Test Recipe</h1>
         <div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating">
@@ -30,38 +30,38 @@ describe('microdata-extractor', () => {
           <meta itemprop="reviewCount" content="10">
         </div>
       </div>
-    `
-    const $ = cheerio.load(html)
-    const result = extractRecipeMicrodata($)
+    `;
+		const $ = cheerio.load(html);
+		const result = extractRecipeMicrodata($);
 
-    expect(result).toHaveLength(1)
+		expect(result).toHaveLength(1);
 
-    expect(result[0]).toEqual({
-      '@type': 'Recipe',
-      name: 'Test Recipe',
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4',
-        reviewCount: '10',
-      },
-    })
-  })
+		expect(result[0]).toEqual({
+			"@type": "Recipe",
+			name: "Test Recipe",
+			aggregateRating: {
+				"@type": "AggregateRating",
+				ratingValue: "4",
+				reviewCount: "10",
+			},
+		});
+	});
 
-  it('should handle multiple values for same property', () => {
-    const html = `
+	it("should handle multiple values for same property", () => {
+		const html = `
       <div itemtype="https://schema.org/Recipe">
         <span itemprop="recipeIngredient">1 cup flour</span>
         <span itemprop="recipeIngredient">2 eggs</span>
       </div>
-    `
-    const $ = cheerio.load(html)
-    const result = extractRecipeMicrodata($)
+    `;
+		const $ = cheerio.load(html);
+		const result = extractRecipeMicrodata($);
 
-    expect(result[0].recipeIngredient).toEqual(['1 cup flour', '2 eggs'])
-  })
+		expect(result[0].recipeIngredient).toEqual(["1 cup flour", "2 eggs"]);
+	});
 
-  it('extract all aggregateRating props', () => {
-    const html = `
+	it("extract all aggregateRating props", () => {
+		const html = `
       <div itemtype="https://schema.org/Recipe">
         <div itemprop="aggregateRating" itemscope="" itemtype="https://schema.org/AggregateRating">
           <div>
@@ -72,22 +72,22 @@ describe('microdata-extractor', () => {
           </div>
         </div>
       </div>
-    `
+    `;
 
-    const $ = cheerio.load(html)
-    const result = extractRecipeMicrodata($)
+		const $ = cheerio.load(html);
+		const result = extractRecipeMicrodata($);
 
-    expect(result).toHaveLength(1)
+		expect(result).toHaveLength(1);
 
-    expect(result[0]).toEqual({
-      '@type': 'Recipe',
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        bestRating: '4',
-        ratingValue: '4',
-        reviewCount: '4',
-        worstRating: '0',
-      },
-    })
-  })
-})
+		expect(result[0]).toEqual({
+			"@type": "Recipe",
+			aggregateRating: {
+				"@type": "AggregateRating",
+				bestRating: "4",
+				ratingValue: "4",
+				reviewCount: "4",
+				worstRating: "0",
+			},
+		});
+	});
+});

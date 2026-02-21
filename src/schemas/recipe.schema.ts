@@ -1,11 +1,6 @@
-import { z } from 'zod'
-import { isNull } from '@/utils'
-import {
-  zHttpUrl,
-  zNonEmptyArray,
-  zPositiveInteger,
-  zString,
-} from './common.schema'
+import { z } from "zod";
+import { isNull } from "@/utils";
+import { zHttpUrl, zNonEmptyArray, zPositiveInteger, zString } from "./common.schema";
 
 /**
  * Current schema version for recipe objects.
@@ -14,7 +9,7 @@ import {
  * Version history:
  * - 1.0.0: Initial schema version
  */
-export const RECIPE_SCHEMA_VERSION = '1.0.0' as const
+export const RECIPE_SCHEMA_VERSION = "1.0.0" as const;
 
 /**
  * Schema for a parsed ingredient from the parse-ingredient library.
@@ -22,79 +17,79 @@ export const RECIPE_SCHEMA_VERSION = '1.0.0' as const
  * @see https://github.com/jakeboone02/parse-ingredient
  */
 export const ParsedIngredientSchema = z.object({
-  /** The primary quantity (the lower quantity in a range, if applicable) */
-  quantity: z.number().nullable(),
-  /** The secondary quantity (the upper quantity in a range, or null if not
-   * applicable) */
-  quantity2: z.number().nullable(),
-  /** The unit of measure identifier (normalized key) */
-  unitOfMeasureID: z.string().nullable(),
-  /** The unit of measure as written in the ingredient string */
-  unitOfMeasure: z.string().nullable(),
-  /** The ingredient description (name of the ingredient) */
-  description: z.string(),
-  /** Whether the "ingredient" is actually a group header, e.g. "For icing:" */
-  isGroupHeader: z.boolean(),
-})
+	/** The primary quantity (the lower quantity in a range, if applicable) */
+	quantity: z.number().nullable(),
+	/** The secondary quantity (the upper quantity in a range, or null if not
+	 * applicable) */
+	quantity2: z.number().nullable(),
+	/** The unit of measure identifier (normalized key) */
+	unitOfMeasureID: z.string().nullable(),
+	/** The unit of measure as written in the ingredient string */
+	unitOfMeasure: z.string().nullable(),
+	/** The ingredient description (name of the ingredient) */
+	description: z.string(),
+	/** Whether the "ingredient" is actually a group header, e.g. "For icing:" */
+	isGroupHeader: z.boolean(),
+});
 
 /**
  * Schema for a single ingredient item
  */
 export const IngredientItemSchema = z.object({
-  value: zString('Ingredient value'),
-  /**
-   * Parsed ingredient data from the parse-ingredient library.
-   * Only present when parsing is enabled via `parseIngredients` option.
-   */
-  parsed: ParsedIngredientSchema.optional().nullable(),
-})
+	value: zString("Ingredient value"),
+	/**
+	 * Parsed ingredient data from the parse-ingredient library.
+	 * Only present when parsing is enabled via `parseIngredients` option.
+	 */
+	parsed: ParsedIngredientSchema.optional().nullable(),
+});
 
 /**
  * Schema for a group of ingredients
  */
 export const IngredientGroupSchema = z.object({
-  name: zString('Ingredient group name').nullable(),
-  items: zNonEmptyArray(IngredientItemSchema, 'Ingredient'),
-})
+	name: zString("Ingredient group name").nullable(),
+	items: zNonEmptyArray(IngredientItemSchema, "Ingredient"),
+});
 
 /**
  * Schema for all recipe ingredients
  * Must have at least one group with at least one ingredient
  */
 export const IngredientsSchema = z
-  .array(IngredientGroupSchema, 'Ingredients must be an array')
-  .min(1, 'Recipe must have at least one ingredient group')
+	.array(IngredientGroupSchema, "Ingredients must be an array")
+	.min(1, "Recipe must have at least one ingredient group");
 
 /**
  * Schema for a single instruction step
  */
 export const InstructionItemSchema = z.object({
-  value: zString('Instruction value'),
-})
+	value: zString("Instruction value"),
+});
 
 /**
  * Schema for a group of instruction steps
  */
 export const InstructionGroupSchema = z.object({
-  name: zString('Instruction group name').nullable(),
-  items: zNonEmptyArray(InstructionItemSchema, 'Instruction'),
-})
+	name: zString("Instruction group name").nullable(),
+	items: zNonEmptyArray(InstructionItemSchema, "Instruction"),
+});
 
 /**
  * Schema for all recipe instructions
  * Must have at least one group with at least one step
  */
 export const InstructionsSchema = z
-  .array(InstructionGroupSchema, 'Instructions must be an array')
-  .min(1, 'Recipe must have at least one instruction group')
+	.array(InstructionGroupSchema, "Instructions must be an array")
+	.min(1, "Recipe must have at least one instruction group");
 
 /**
  * Schema for a link object
  */
 export const LinkSchema = z.object({
-  href: zHttpUrl('Link href'),
-  text: zString('Link text'),
-})
+	href: zHttpUrl("Link href"),
+	text: zString("Link text"),
+});
 
 /**
  * Base RecipeObject schema without cross-field validations.
@@ -113,88 +108,73 @@ export const LinkSchema = z.object({
  * ```
  */
 export const RecipeObjectBaseSchema = z.object({
-  // Schema version for migrations
-  schemaVersion: z
-    .literal(RECIPE_SCHEMA_VERSION)
-    .default(RECIPE_SCHEMA_VERSION)
-    .describe('Schema version for recipe data migrations'),
+	// Schema version for migrations
+	schemaVersion: z
+		.literal(RECIPE_SCHEMA_VERSION)
+		.default(RECIPE_SCHEMA_VERSION)
+		.describe("Schema version for recipe data migrations"),
 
-  // Required fields
-  host: z.hostname('Host must be a valid hostname'),
+	// Required fields
+	host: z.hostname("Host must be a valid hostname"),
 
-  title: zString('Title', { max: 500 }),
+	title: zString("Title", { max: 500 }),
 
-  author: zString('Author', { max: 255 }),
+	author: zString("Author", { max: 255 }),
 
-  ingredients: IngredientsSchema,
-  instructions: InstructionsSchema,
+	ingredients: IngredientsSchema,
+	instructions: InstructionsSchema,
 
-  // URL fields
-  canonicalUrl: zHttpUrl('Canonical URL'),
-  image: zHttpUrl('Image'),
+	// URL fields
+	canonicalUrl: zHttpUrl("Canonical URL"),
+	image: zHttpUrl("Image"),
 
-  // Time fields (in minutes)
-  totalTime: zPositiveInteger('Total time'),
-  cookTime: zPositiveInteger('Cook time'),
-  prepTime: zPositiveInteger('Prep time'),
+	// Time fields (in minutes)
+	totalTime: zPositiveInteger("Total time"),
+	cookTime: zPositiveInteger("Cook time"),
+	prepTime: zPositiveInteger("Prep time"),
 
-  // Ratings
-  ratings: z
-    .number('Ratings must be a number')
-    .min(0, 'Ratings must be at least 0')
-    .max(5, 'Ratings must be at most 5')
-    .default(0),
+	// Ratings
+	ratings: z
+		.number("Ratings must be a number")
+		.min(0, "Ratings must be at least 0")
+		.max(5, "Ratings must be at most 5")
+		.default(0),
 
-  ratingsCount: z
-    .int('Ratings count must be an integer')
-    .nonnegative('Ratings count must be non-negative')
-    .default(0),
+	ratingsCount: z
+		.int("Ratings count must be an integer")
+		.nonnegative("Ratings count must be non-negative")
+		.default(0),
 
-  // String fields
-  yields: zString('Yields'),
-  description: zString('Description'),
+	// String fields
+	yields: zString("Yields"),
+	description: zString("Description"),
 
-  language: zString('Language', { min: 2 }).optional().default('en'),
+	language: zString("Language", { min: 2 }).optional().default("en"),
 
-  siteName: zString('Site name').nullable(),
+	siteName: zString("Site name").nullable(),
 
-  cookingMethod: zString('Cooking method').nullable(),
+	cookingMethod: zString("Cooking method").nullable(),
 
-  // List fields
-  category: z
-    .array(zString('Category item'), 'Category must be an array')
-    .default([]),
+	// List fields
+	category: z.array(zString("Category item"), "Category must be an array").default([]),
 
-  cuisine: z
-    .array(zString('Cuisine item'), 'Cuisine must be an array')
-    .default([]),
+	cuisine: z.array(zString("Cuisine item"), "Cuisine must be an array").default([]),
 
-  keywords: z
-    .array(zString('Keyword item'), 'Keywords must be an array')
-    .default([]),
+	keywords: z.array(zString("Keyword item"), "Keywords must be an array").default([]),
 
-  dietaryRestrictions: z
-    .array(
-      zString('Dietary restriction item'),
-      'Dietary restrictions must be an array',
-    )
-    .default([]),
+	dietaryRestrictions: z
+		.array(zString("Dietary restriction item"), "Dietary restrictions must be an array")
+		.default([]),
 
-  equipment: z
-    .array(zString('Equipment item'), 'Equipment must be an array')
-    .default([]),
+	equipment: z.array(zString("Equipment item"), "Equipment must be an array").default([]),
 
-  links: z.array(LinkSchema, 'Links must be an array').optional(),
+	links: z.array(LinkSchema, "Links must be an array").optional(),
 
-  // Complex fields
-  nutrients: z
-    .record(z.string(), z.string(), 'Nutrients must be an object')
-    .default({}),
+	// Complex fields
+	nutrients: z.record(z.string(), z.string(), "Nutrients must be an object").default({}),
 
-  reviews: z
-    .record(z.string(), z.string(), 'Reviews must be an object')
-    .default({}),
-})
+	reviews: z.record(z.string(), z.string(), "Reviews must be an object").default({}),
+});
 
 /**
  * Applies recipe-specific transformations and validations to a schema.
@@ -213,39 +193,38 @@ export const RecipeObjectBaseSchema = z.object({
  * const ValidatedCustomSchema = applyRecipeValidations(CustomSchema)
  * ```
  */
-export function applyRecipeValidations<
-  T extends z.infer<typeof RecipeObjectBaseSchema>,
->(schema: z.ZodType<T>) {
-  return schema
-    .transform((data) => {
-      // Auto-fix: calculate totalTime if missing but cook and prep times exist
-      if (!data.totalTime && !isNull(data.cookTime) && !isNull(data.prepTime)) {
-        data.totalTime = data.cookTime + data.prepTime
-      }
-      return data
-    })
-    .refine(
-      ({ totalTime, cookTime, prepTime }) => {
-        if (!isNull(totalTime) && !isNull(cookTime) && !isNull(prepTime)) {
-          return totalTime >= cookTime + prepTime
-        }
-        return true
-      },
-      {
-        message:
-          'Total time should be at least the sum of cook time and prep time',
-        path: ['totalTime'],
-      },
-    )
-    .refine(
-      (data) => {
-        return data.ratings === 0 || data.ratingsCount > 0
-      },
-      {
-        message: 'Ratings count should be greater than 0 when ratings exist',
-        path: ['ratingsCount'],
-      },
-    )
+export function applyRecipeValidations<T extends z.infer<typeof RecipeObjectBaseSchema>>(
+	schema: z.ZodType<T>,
+) {
+	return schema
+		.transform((data) => {
+			// Auto-fix: calculate totalTime if missing but cook and prep times exist
+			if (!data.totalTime && !isNull(data.cookTime) && !isNull(data.prepTime)) {
+				data.totalTime = data.cookTime + data.prepTime;
+			}
+			return data;
+		})
+		.refine(
+			({ totalTime, cookTime, prepTime }) => {
+				if (!isNull(totalTime) && !isNull(cookTime) && !isNull(prepTime)) {
+					return totalTime >= cookTime + prepTime;
+				}
+				return true;
+			},
+			{
+				message: "Total time should be at least the sum of cook time and prep time",
+				path: ["totalTime"],
+			},
+		)
+		.refine(
+			(data) => {
+				return data.ratings === 0 || data.ratingsCount > 0;
+			},
+			{
+				message: "Ratings count should be greater than 0 when ratings exist",
+				path: ["ratingsCount"],
+			},
+		);
 }
 
 /**
@@ -255,4 +234,4 @@ export function applyRecipeValidations<
  * For custom extensions, use RecipeObjectBaseSchema.extend() and then
  * apply validations with applyRecipeValidations().
  */
-export const RecipeObjectSchema = applyRecipeValidations(RecipeObjectBaseSchema)
+export const RecipeObjectSchema = applyRecipeValidations(RecipeObjectBaseSchema);

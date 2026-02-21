@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class CuisineAZ extends AbstractScraper {
-  static host() {
-    return 'cuisineaz.com'
-  }
+	static host() {
+		return "cuisineaz.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

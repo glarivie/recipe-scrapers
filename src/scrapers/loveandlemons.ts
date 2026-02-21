@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class LoveAndLemons extends AbstractScraper {
-  static host() {
-    return 'loveandlemons.com'
-  }
+	static host() {
+		return "loveandlemons.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

@@ -1,68 +1,68 @@
 {
-  "name": "recipe-scrapers",
-  "version": "1.0.0",
-  "license": "MIT",
-  "description": "A TypeScript library for scraping recipe data from cooking websites",
-  "author": {
-    "name": "Guillaume L.",
-    "url": "https://github.com/glarivie"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/glarivie/recipe-scrapers.git"
-  },
-  "homepage": "https://github.com/glarivie/recipe-scrapers#readme",
-  "bugs": {
-    "url": "https://github.com/glarivie/recipe-scrapers/issues"
-  },
-  "type": "module",
-  "module": "dist/index.mjs",
-  "main": "dist/index.mjs",
-  "types": "dist/index.d.mts",
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
-    }
-  },
-  "files": [
-    "dist",
-    "docs",
-    "CHANGELOG.md",
-    "LICENSE",
-    "README.md"
-  ],
-  "keywords": [
-    "recipe",
-    "scraper",
-    "parser",
-    "food",
-    "cooking"
-  ],
-  "scripts": {
-    "build": "tsdown src/index.ts --outdir dist",
-    "test": "bun test",
-    "test:coverage": "bun run test --coverage",
-    "fetch-test-data": "bun scripts/fetch-test-data.ts",
-    "process-test-data": "bun scripts/process-test-data.ts",
-    "lint": "biome check && bun run ts:check",
-    "lint:fix": "biome check --write",
-    "ts:check": "tsc --noEmit",
-    "prepublishOnly": "bun run lint && bun run build"
-  },
-  "dependencies": {
-    "cheerio": "^1.1.2",
-    "iso8601-duration": "^2.1.3",
-    "jsonrepair": "^3.13.2",
-    "parse-ingredient": "^1.3.3",
-    "zod": "^4.3.5"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.11",
-    "@types/bun": "^1.3.0",
-    "schema-dts": "^1.1.5",
-    "tsdown": "^0.19.0",
-    "typescript": "^5.9.3"
-  }
+	"name": "recipe-scrapers",
+	"version": "1.0.0",
+	"license": "MIT",
+	"description": "A TypeScript library for scraping recipe data from cooking websites",
+	"author": {
+		"name": "Guillaume L.",
+		"url": "https://github.com/glarivie"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/glarivie/recipe-scrapers.git"
+	},
+	"homepage": "https://github.com/glarivie/recipe-scrapers#readme",
+	"bugs": {
+		"url": "https://github.com/glarivie/recipe-scrapers/issues"
+	},
+	"type": "module",
+	"module": "dist/index.mjs",
+	"main": "dist/index.mjs",
+	"types": "dist/index.d.mts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"files": [
+		"dist",
+		"docs",
+		"CHANGELOG.md",
+		"LICENSE",
+		"README.md"
+	],
+	"keywords": [
+		"recipe",
+		"scraper",
+		"parser",
+		"food",
+		"cooking"
+	],
+	"scripts": {
+		"build": "tsdown src/index.ts --outdir dist",
+		"test": "bun test",
+		"test:coverage": "bun run test --coverage",
+		"fetch-test-data": "bun scripts/fetch-test-data.ts",
+		"process-test-data": "bun scripts/process-test-data.ts",
+		"lint": "biome check && bun run ts:check",
+		"lint:fix": "biome check --write",
+		"ts:check": "tsc --noEmit",
+		"prepublishOnly": "bun run lint && bun run build"
+	},
+	"dependencies": {
+		"cheerio": "^1.1.2",
+		"iso8601-duration": "^2.1.3",
+		"jsonrepair": "^3.13.2",
+		"parse-ingredient": "^1.3.3",
+		"zod": "^4.3.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.11",
+		"@types/bun": "^1.3.0",
+		"schema-dts": "^1.1.5",
+		"tsdown": "^0.19.0",
+		"typescript": "^5.9.3"
+	}
 }

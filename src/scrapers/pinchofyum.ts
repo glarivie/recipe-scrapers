@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class PinchOfYum extends AbstractScraper {
-  static host() {
-    return 'pinchofyum.com'
-  }
+	static host() {
+		return "pinchofyum.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

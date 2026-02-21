@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class DamnDelicious extends AbstractScraper {
-  static host() {
-    return 'damndelicious.net'
-  }
+	static host() {
+		return "damndelicious.net";
+	}
 
-  extractors = {}
+	extractors = {};
 }

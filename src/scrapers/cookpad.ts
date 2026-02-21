@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class CookPad extends AbstractScraper {
-  static host() {
-    return 'cookpad.com'
-  }
+	static host() {
+		return "cookpad.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

@@ -1,34 +1,29 @@
-import { AbstractScraper } from '@/abstract-scraper'
-import { NoIngredientsFoundException } from '@/exceptions'
-import type { RecipeFields } from '@/types/recipe.interface'
-import { flattenIngredients, groupIngredients } from '@/utils/ingredients'
+import { AbstractScraper } from "@/abstract-scraper";
+import { NoIngredientsFoundException } from "@/exceptions";
+import type { RecipeFields } from "@/types/recipe.interface";
+import { flattenIngredients, groupIngredients } from "@/utils/ingredients";
 
 export class ThePioneerWoman extends AbstractScraper {
-  static host() {
-    return 'thepioneerwoman.com'
-  }
+	static host() {
+		return "thepioneerwoman.com";
+	}
 
-  extractors = {
-    ingredients: this.ingredients.bind(this),
-  }
+	extractors = {
+		ingredients: this.ingredients.bind(this),
+	};
 
-  protected ingredients(
-    prevValue: RecipeFields['ingredients'] | undefined,
-  ): RecipeFields['ingredients'] {
-    const headingSelector = '.ingredients-body h3'
-    const ingredientSelector = '.ingredient-lists li'
+	protected ingredients(
+		prevValue: RecipeFields["ingredients"] | undefined,
+	): RecipeFields["ingredients"] {
+		const headingSelector = ".ingredients-body h3";
+		const ingredientSelector = ".ingredient-lists li";
 
-    if (prevValue && prevValue.length > 0) {
-      const values = flattenIngredients(prevValue)
+		if (prevValue && prevValue.length > 0) {
+			const values = flattenIngredients(prevValue);
 
-      return groupIngredients(
-        this.$,
-        values,
-        headingSelector,
-        ingredientSelector,
-      )
-    }
+			return groupIngredients(this.$, values, headingSelector, ingredientSelector);
+		}
 
-    throw new NoIngredientsFoundException()
-  }
+		throw new NoIngredientsFoundException();
+	}
 }

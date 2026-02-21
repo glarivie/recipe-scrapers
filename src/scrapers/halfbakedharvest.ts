@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class HalfBakedHarvest extends AbstractScraper {
-  static host() {
-    return 'halfbakedharvest.com'
-  }
+	static host() {
+		return "halfbakedharvest.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

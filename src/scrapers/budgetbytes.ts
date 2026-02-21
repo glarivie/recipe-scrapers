@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class BudgetBytes extends AbstractScraper {
-  static host() {
-    return 'budgetbytes.com'
-  }
+	static host() {
+		return "budgetbytes.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }

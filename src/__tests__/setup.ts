@@ -1,1 +1,1 @@
-console.clear()
+console.clear();

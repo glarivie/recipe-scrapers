@@ -1,9 +1,9 @@
-import { AbstractScraper } from '@/abstract-scraper'
+import { AbstractScraper } from "@/abstract-scraper";
 
 export class G750g extends AbstractScraper {
-  static host() {
-    return '750g.com'
-  }
+	static host() {
+		return "750g.com";
+	}
 
-  extractors = {}
+	extractors = {};
 }
