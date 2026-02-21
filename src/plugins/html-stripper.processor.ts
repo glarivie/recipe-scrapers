@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
 
 import { PostProcessorPlugin } from "~/abstract-postprocessor-plugin";
 import type { RecipeFields } from "~/types/recipe.interface";
@@ -62,11 +62,10 @@ export class HtmlStripperPlugin extends PostProcessorPlugin {
 	}
 
 	private stripHtml(html: string): string {
-		const $ = cheerio.load(html, null, false);
+		const root = parse(html);
 		return (
-			$.root()
-				.text()
-				// Cheerio decodes &nbsp; as non-breaking space (U+00A0), normalize to regular space
+			root.textContent
+				// node-html-parser decodes &nbsp; as non-breaking space (U+00A0), normalize to regular space
 				.replace(/\u00a0/g, " ")
 				.trim()
 		);

@@ -1,4 +1,4 @@
-import type { CheerioAPI } from "cheerio";
+import type { HTMLElement } from "node-html-parser";
 
 import type { IngredientGroup, IngredientItem, Ingredients } from "~/types/recipe.interface";
 
@@ -121,13 +121,13 @@ export function bestMatch(testString: string, targetStrings: string[]): string {
 }
 
 function findSelectors(
-	$: CheerioAPI,
+	root: HTMLElement,
 	initialHeading?: string,
 	initialItem?: string,
 ): [string, string] | null {
 	if (initialHeading && initialItem) {
 		// Check if the provided selectors actually exist in the DOM
-		if ($(initialHeading).length && $(initialItem).length) {
+		if (root.querySelectorAll(initialHeading).length && root.querySelectorAll(initialItem).length) {
 			return [initialHeading, initialItem];
 		}
 		// If custom selectors are provided but not found, return null
@@ -139,7 +139,7 @@ function findSelectors(
 	for (const { headingSelectors, itemSelectors } of values) {
 		for (const heading of headingSelectors) {
 			for (const item of itemSelectors) {
-				if ($(heading).length && $(item).length) {
+				if (root.querySelectorAll(heading).length && root.querySelectorAll(item).length) {
 					return [heading, item];
 				}
 			}
@@ -154,19 +154,19 @@ function findSelectors(
  * If no selectors are provided, it will try to find the best matching
  * selectors from the default grouping selectors.
  *
- * @param $ Cheerio instance
+ * @param root Parsed HTML root element
  * @param ingredientValues Array of ingredient strings to group
  * @param headingSelector Optional custom heading selector
  * @param itemSelector Optional custom item selector
  * @returns Ingredients array with groups
  */
 export function groupIngredients(
-	$: CheerioAPI,
+	root: HTMLElement,
 	ingredientValues: string[],
 	headingSelector?: string,
 	itemSelector?: string,
 ): Ingredients {
-	const selectors = findSelectors($, headingSelector, itemSelector);
+	const selectors = findSelectors(root, headingSelector, itemSelector);
 
 	if (!selectors) {
 		return stringsToIngredients(ingredientValues);
@@ -175,9 +175,9 @@ export function groupIngredients(
 	const [groupNameSelector, ingredientSelector] = selectors;
 
 	const foundIngredients = new Set(
-		$(ingredientSelector)
-			.toArray()
-			.map((el) => $(el).text().trim())
+		root
+			.querySelectorAll(ingredientSelector)
+			.map((el) => el.textContent.trim())
 			.filter(Boolean),
 	);
 
@@ -191,23 +191,26 @@ export function groupIngredients(
 	const groupings = new Map<string | null, string[]>();
 	let currentHeading: string | null = null;
 
+	// Pre-query heading and ingredient element sets for membership checking
+	// (node-html-parser doesn't support el.matches())
+	const headingElements = new Set(root.querySelectorAll(groupNameSelector));
+	const ingredientElements = new Set(root.querySelectorAll(ingredientSelector));
+
 	// iterate in document order over headings & items
-	const elements = $(`${groupNameSelector}, ${ingredientSelector}`).toArray();
+	const elements = root.querySelectorAll(`${groupNameSelector}, ${ingredientSelector}`);
 
 	for (const el of elements) {
-		const $el = $(el);
-
-		if ($el.is(groupNameSelector)) {
+		if (headingElements.has(el)) {
 			// it's a heading
-			const headingText = normalizeString($el.text()).replace(/:$/, "");
+			const headingText = normalizeString(el.textContent).replace(/:$/, "");
 			currentHeading = headingText || null;
 
 			if (!groupings.has(currentHeading)) {
 				groupings.set(currentHeading, []);
 			}
-		} else if ($el.is(ingredientSelector)) {
+		} else if (ingredientElements.has(el)) {
 			// it's an ingredient
-			const text = normalizeString($el.text());
+			const text = normalizeString(el.textContent);
 
 			if (!text) {
 				continue;

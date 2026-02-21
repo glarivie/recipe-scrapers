@@ -1,4 +1,4 @@
-import { load } from "cheerio";
+import { parse } from "node-html-parser";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { NotImplementedException, UnsupportedFieldException } from "~/exceptions";
@@ -15,7 +15,7 @@ class MockExtractorPlugin extends ExtractorPlugin {
 	private supportedFields: Set<keyof RecipeFields>;
 
 	constructor(supportedFields: (keyof RecipeFields)[] = []) {
-		const $ = load("<html><body></body></html>");
+		const $ = parse("<html><body></body></html>");
 		super($);
 		this.supportedFields = new Set(supportedFields);
 	}
@@ -58,7 +58,7 @@ class AsyncMockExtractorPlugin extends ExtractorPlugin {
 	priority = 100;
 
 	constructor() {
-		const $ = load("<html><body></body></html>");
+		const $ = parse("<html><body></body></html>");
 		super($);
 	}
 
@@ -89,7 +89,7 @@ class ThrowingExtractorPlugin extends ExtractorPlugin {
 	priority = 100;
 
 	constructor() {
-		const $ = load("<html><body></body></html>");
+		const $ = parse("<html><body></body></html>");
 		super($);
 	}
 
@@ -114,9 +114,9 @@ describe("ExtractorPlugin", () => {
 			expect(plugin).toBeInstanceOf(ExtractorPlugin);
 		});
 
-		it("should have access to cheerio instance from parent", () => {
+		it("should have access to parsed HTML root from parent", () => {
 			expect(plugin.$).toBeDefined();
-			expect(typeof plugin.$).toBe("function");
+			expect(typeof plugin.$).toBe("object");
 		});
 	});
 

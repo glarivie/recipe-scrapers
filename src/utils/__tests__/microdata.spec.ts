@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 
 import { extractRecipeMicrodata } from "../microdata";
@@ -11,8 +11,8 @@ describe("microdata-extractor", () => {
         <meta itemprop="prepTime" content="PT15M">
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]).toEqual({
@@ -32,8 +32,8 @@ describe("microdata-extractor", () => {
         </div>
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 
@@ -55,8 +55,8 @@ describe("microdata-extractor", () => {
         <span itemprop="recipeIngredient">2 eggs</span>
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result[0].recipeIngredient).toEqual(["1 cup flour", "2 eggs"]);
 	});
@@ -75,8 +75,8 @@ describe("microdata-extractor", () => {
       </div>
     `;
 
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 
@@ -102,8 +102,8 @@ describe("microdata-extractor", () => {
         <meta itemprop="prepTime" content="PT10M">
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]["@type"]).toBe("Recipe");
@@ -124,8 +124,8 @@ describe("microdata-extractor", () => {
         <meta itemprop="prepTime" content="PT20M">
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]).toEqual({
@@ -154,8 +154,8 @@ describe("microdata-extractor", () => {
         </div>
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]["@type"]).toBe("Recipe");
@@ -181,8 +181,8 @@ describe("microdata-extractor", () => {
         <a itemprop="url" href="https://example.com/recipe">Link</a>
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]).toEqual({
@@ -201,8 +201,8 @@ describe("microdata-extractor", () => {
         <span itemprop="description"></span>
       </div>
     `;
-		const $ = cheerio.load(html);
-		const result = extractRecipeMicrodata($);
+		const root = parse(html);
+		const result = extractRecipeMicrodata(root);
 
 		expect(result).toHaveLength(1);
 		expect(result[0]).toEqual({

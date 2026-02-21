@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { parse } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 
 import type { Ingredients } from "~/types/recipe.interface";
@@ -104,7 +104,7 @@ describe("stringsToIngredients", () => {
 
 describe("scoreSentenceSimilarity", () => {
 	it("returns 1 for exact match", () => {
-		expect(scoreSentenceSimilarity("¼ cup maple syrup", "¼ cup maple syrup")).toBe(1.0);
+		expect(scoreSentenceSimilarity("1/4 cup maple syrup", "1/4 cup maple syrup")).toBe(1.0);
 	});
 
 	it("should return 0 for strings shorter than 2 characters", () => {
@@ -138,12 +138,12 @@ describe("scoreSentenceSimilarity", () => {
 describe("bestMatch", () => {
 	it("finds exact match", () => {
 		const targets = [
-			"¼ cup vegan mayonnaise",
+			"1/4 cup vegan mayonnaise",
 			"apple cider vinegar",
-			"¼ tsp salt",
+			"1/4 tsp salt",
 			"1 cup shredded red cabbage",
 		];
-		expect(bestMatch("¼ cup vegan mayonnaise", targets)).toBe("¼ cup vegan mayonnaise");
+		expect(bestMatch("1/4 cup vegan mayonnaise", targets)).toBe("1/4 cup vegan mayonnaise");
 	});
 
 	it("should return the best matching string", () => {
@@ -156,7 +156,7 @@ describe("bestMatch", () => {
 	it("selects the closest non-exact match", () => {
 		const targets = [
 			"apple cider vinegar",
-			"¼ tsp salt",
+			"1/4 tsp salt",
 			"1 cup shredded red cabbage",
 			"5 large soft tortilla",
 		];
@@ -171,13 +171,13 @@ describe("bestMatch", () => {
 	});
 
 	it("handles singular vs plural", () => {
-		const targets = ["2 medium tomato", "½ head butter lettuce", "1 carrot"];
+		const targets = ["2 medium tomato", "1/2 head butter lettuce", "1 carrot"];
 		expect(bestMatch("tomato", targets)).toBe("2 medium tomato");
 	});
 
 	it("doesn't return the query when it's not in targets", () => {
-		const targets = ["¼ cup vegan mayonnaise", "apple cider vinegar", "¼ tsp salt"];
-		expect(bestMatch("¼ cup maple syrup", targets)).not.toBe("¼ cup maple syrup");
+		const targets = ["1/4 cup vegan mayonnaise", "apple cider vinegar", "1/4 tsp salt"];
+		expect(bestMatch("1/4 cup maple syrup", targets)).not.toBe("1/4 cup maple syrup");
 	});
 
 	it("throws an error for empty target list", () => {
@@ -195,11 +195,11 @@ describe("findSelectors", () => {
         <li class="custom-ingredient">Custom ingredient</li>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["Custom ingredient"];
 
 		// Should use custom selectors even when WPRM selectors exist
-		const result = groupIngredients($, ingredientsList, ".custom-heading", ".custom-ingredient");
+		const result = groupIngredients(root, ingredientsList, ".custom-heading", ".custom-ingredient");
 
 		expect(result).toHaveLength(1);
 		expect(result[0].name).toBe("Custom Group");
@@ -208,9 +208,9 @@ describe("findSelectors", () => {
 
 describe("groupIngredients", () => {
 	it("should return default group when no grouping selectors are found", () => {
-		const $ = cheerio.load("<div></div>");
+		const root = parse("<div></div>");
 		const ingredientsList = ["flour", "sugar", "eggs"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -221,9 +221,9 @@ describe("groupIngredients", () => {
 	});
 
 	it("should return default group when selectors are provided but not found in DOM", () => {
-		const $ = cheerio.load("<div></div>");
+		const root = parse("<div></div>");
 		const ingredientsList = ["flour", "sugar", "eggs"];
-		const result = groupIngredients($, ingredientsList, ".heading", ".ingredient");
+		const result = groupIngredients(root, ingredientsList, ".heading", ".ingredient");
 
 		expect(result).toEqual([
 			{
@@ -243,9 +243,9 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">2 eggs</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["2 cups flour", "1 cup sugar", "2 eggs"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toHaveLength(2);
 
@@ -265,9 +265,9 @@ describe("groupIngredients", () => {
         <li class="custom-ingredient">ingredient 2</li>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["ingredient 1", "ingredient 2"];
-		const result = groupIngredients($, ingredientsList, ".custom-heading", ".custom-ingredient");
+		const result = groupIngredients(root, ingredientsList, ".custom-heading", ".custom-ingredient");
 
 		expect(result).toEqual([
 			{
@@ -284,12 +284,12 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">ingredient 1</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		// More ingredients than found in HTML
 		const ingredientsList = ["ingredient 1", "ingredient 2"];
 
 		// Should fall back to ungrouped ingredients instead of throwing
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 		expect(result).toEqual([
 			{
 				name: null,
@@ -305,9 +305,9 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">ingredient 1</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["ingredient 1"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -325,9 +325,9 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">ingredient 2</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["ingredient 1", "ingredient 2"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		// Default heading for first ingredient
 		const groupNames = result.map((g) => g.name);
@@ -344,9 +344,9 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">3 celery stalks</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["2 carrots, diced", "1 onion, chopped", "3 celery stalks"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -367,10 +367,10 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">2 cups all purpose flour</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		// Note the hyphen difference
 		const ingredientsList = ["2 cups all-purpose flour"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -392,9 +392,9 @@ describe("groupIngredients", () => {
         </div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["1 tbsp soy sauce", "2 tsp sesame oil"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -412,11 +412,11 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">real ingredient</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["real ingredient"];
 
 		// Should handle the empty ingredient element without crashing
-		expect(() => groupIngredients($, ingredientsList)).not.toThrow();
+		expect(() => groupIngredients(root, ingredientsList)).not.toThrow();
 	});
 
 	it("should handle multiple empty headings with same default name", () => {
@@ -428,9 +428,9 @@ describe("groupIngredients", () => {
         <div class="wprm-recipe-ingredient">ingredient 2</div>
       </div>
     `;
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["ingredient 1", "ingredient 2"];
-		const result = groupIngredients($, ingredientsList);
+		const result = groupIngredients(root, ingredientsList);
 
 		expect(result).toEqual([
 			{
@@ -454,9 +454,9 @@ describe("groupIngredients", () => {
       </div>
     `;
 
-		const $ = cheerio.load(html);
+		const root = parse(html);
 		const ingredientsList = ["ingredient 1", "ingredient 2"];
-		const result = groupIngredients($, ingredientsList, ".ingredients h3", ".ingredients li");
+		const result = groupIngredients(root, ingredientsList, ".ingredients h3", ".ingredients li");
 
 		expect(result).toHaveLength(2);
 		expect(getGroupValues(result, null)).toEqual(["ingredient 1"]);

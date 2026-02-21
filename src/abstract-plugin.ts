@@ -1,4 +1,4 @@
-import type { CheerioAPI } from "cheerio";
+import type { HTMLElement } from "node-html-parser";
 
 export abstract class AbstractPlugin {
 	/** The name of the plugin */
@@ -7,5 +7,5 @@ export abstract class AbstractPlugin {
 	/** The priority of the plugin */
 	abstract priority: number;
 
-	constructor(readonly $: CheerioAPI) {}
+	constructor(readonly $: HTMLElement) {}
 }

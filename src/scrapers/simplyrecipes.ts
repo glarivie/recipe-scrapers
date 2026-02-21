@@ -55,7 +55,7 @@ export class SimplyRecipes extends AbstractScraper {
 	 */
 	protected instructions(): RecipeFields["instructions"] {
 		// select all <li> under the steps container
-		const items = this.$("div.structured-project__steps ol li").toArray();
+		const items = this.$.querySelectorAll("div.structured-project__steps ol li");
 
 		if (items.length === 0) {
 			return [];
@@ -64,9 +64,11 @@ export class SimplyRecipes extends AbstractScraper {
 		const steps = items
 			.map((el) => {
 				// clone & strip images/figures before grabbing text
-				const $clone = this.$(el).clone();
-				$clone.find("img, picture, figure").remove();
-				return normalizeString($clone.text());
+				const clone = el.clone() as unknown as typeof el;
+				for (const child of clone.querySelectorAll("img, picture, figure")) {
+					child.remove();
+				}
+				return normalizeString(clone.textContent);
 			})
 			.filter((text) => text.length > 0)
 			.map(createInstructionItem);

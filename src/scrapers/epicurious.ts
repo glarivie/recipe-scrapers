@@ -11,7 +11,7 @@ export class Epicurious extends AbstractScraper {
 	};
 
 	protected author(): RecipeFields["author"] {
-		const author = this.$('a[itemprop="author"]').text().trim();
+		const author = this.$.querySelector('a[itemprop="author"]')?.textContent.trim() ?? "";
 		return author;
 	}
 }

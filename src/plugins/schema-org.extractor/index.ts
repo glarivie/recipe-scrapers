@@ -1,5 +1,5 @@
-import type { CheerioAPI } from "cheerio";
 import { jsonrepair } from "jsonrepair";
+import type { HTMLElement } from "node-html-parser";
 import type { AggregateRating } from "schema-dts";
 
 import { ExtractorPlugin } from "~/abstract-extractor-plugin";
@@ -79,7 +79,7 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 		dietaryRestrictions: this.dietaryRestrictions.bind(this),
 	};
 
-	constructor($: CheerioAPI, logLevel?: LogLevel) {
+	constructor($: HTMLElement, logLevel?: LogLevel) {
 		super($);
 
 		this.logger = new Logger(SchemaOrgPlugin.name, logLevel);
@@ -106,9 +106,9 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 	 * Extracts structured JSON-LD data from the page.
 	 */
 	private extractJsonLdData() {
-		this.$('script[type="application/ld+json"]').each((_, el) => {
+		for (const el of this.$.querySelectorAll('script[type="application/ld+json"]')) {
 			try {
-				const json = this.$(el).html()?.trim();
+				const json = el.innerHTML?.trim();
 
 				if (json) {
 					const data = this.parseJsonLd(json);
@@ -126,7 +126,7 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 			} catch (error) {
 				this.logger.warn("Failed to parse JSON-LD", error);
 			}
-		});
+		}
 	}
 
 	private parseJsonLd(json: string): unknown {

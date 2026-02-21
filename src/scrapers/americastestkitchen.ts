@@ -162,8 +162,8 @@ export class AmericasTestKitchen extends AbstractScraper {
 
 	private getRecipeData(): RecipeData | null {
 		if (this.data === null) {
-			const jsonElement = this.$('script[type="application/json"]');
-			const jsonString = jsonElement.html();
+			const jsonElement = this.$.querySelector('script[type="application/json"]');
+			const jsonString = jsonElement?.innerHTML;
 
 			if (!jsonString) {
 				this.logger.warn("Could not find JSON data script tag");

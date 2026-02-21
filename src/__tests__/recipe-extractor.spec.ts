@@ -1,4 +1,4 @@
-import { load } from "cheerio";
+import { parse } from "node-html-parser";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
@@ -13,7 +13,7 @@ describe("RecipeExtractor", () => {
 		const pluginA = {
 			name: "PluginA",
 			priority: 10,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: (field: keyof RecipeFields) => field === "title",
 			extract: async (_: keyof RecipeFields) => "PluginA-Name",
 		} as ExtractorPlugin;
@@ -28,14 +28,14 @@ describe("RecipeExtractor", () => {
 		const low = {
 			name: "Low",
 			priority: 1,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: () => true,
 			extract: () => "L1",
 		} as ExtractorPlugin;
 		const high = {
 			name: "High",
 			priority: 100,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: () => true,
 			extract: () => "H1",
 		} as ExtractorPlugin;
@@ -54,7 +54,7 @@ describe("RecipeExtractor", () => {
 		const plugin = {
 			name: "X",
 			priority: 0,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: () => false,
 			extract: () => "X",
 		} as ExtractorPlugin;
@@ -71,7 +71,7 @@ describe("RecipeExtractor", () => {
 		const plugin = {
 			name: "P",
 			priority: 0,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: () => true,
 			extract: () => "FromPlugin",
 		} as ExtractorPlugin;
@@ -88,7 +88,7 @@ describe("RecipeExtractor", () => {
 		const plugin = {
 			name: "None",
 			priority: 0,
-			$: load("<html><body></body></html>"),
+			$: parse("<html><body></body></html>"),
 			supports: () => false,
 			extract: () => "X",
 		} as ExtractorPlugin;

@@ -1,5 +1,4 @@
-import type { Cheerio, CheerioAPI } from "cheerio";
-import type { Element } from "domhandler";
+import type { HTMLElement } from "node-html-parser";
 
 interface MicrodataObject {
 	"@type"?: string;
@@ -16,24 +15,24 @@ const addProperty = (obj: Record<string, unknown>, key: string, value: unknown) 
 	}
 };
 
-const extractValueFromElement = <T extends Element>(element: Cheerio<T>): string | undefined => {
-	if (element.is("meta")) {
-		return element.attr("content");
+const extractValueFromElement = (element: HTMLElement): string | undefined => {
+	if (element.rawTagName === "meta") {
+		return element.getAttribute("content");
 	}
 
-	if (element.is("time")) {
-		return element.attr("datetime") || element.text().trim();
+	if (element.rawTagName === "time") {
+		return element.getAttribute("datetime") || element.textContent.trim();
 	}
 
-	if (element.is("img")) {
-		return element.attr("src");
+	if (element.rawTagName === "img") {
+		return element.getAttribute("src");
 	}
 
-	if (element.is("a")) {
-		return element.attr("href");
+	if (element.rawTagName === "a") {
+		return element.getAttribute("href");
 	}
 
-	return element.text().trim();
+	return element.textContent.trim();
 };
 
 const extractSchemaType = (itemType: string): string | undefined => {
@@ -44,17 +43,16 @@ const extractSchemaType = (itemType: string): string | undefined => {
 /**
  * Extracts microdata from HTML elements using itemtype and itemprop attributes
  *
- * @param $ - Cheerio instance
+ * @param root - Parsed HTML root element
  * @param selector - Selector to find elements with microdata
  * @returns Array of extracted microdata objects
  */
-export function extractMicrodata($: CheerioAPI, selector: string): MicrodataObject[] {
+export function extractMicrodata(root: HTMLElement, selector: string): MicrodataObject[] {
 	const results: MicrodataObject[] = [];
-	const elements = $(selector);
+	const elements = root.querySelectorAll(selector);
 
-	elements.each((_, el) => {
-		const $element = $(el);
-		const itemType = $element.attr("itemtype");
+	for (const el of elements) {
+		const itemType = el.getAttribute("itemtype");
 		const rootObject: MicrodataObject = {};
 
 		// Set the schema type if available
@@ -66,37 +64,36 @@ export function extractMicrodata($: CheerioAPI, selector: string): MicrodataObje
 		}
 
 		// Also get itemprop elements that are not inside nested itemtype elements
-		const allProps = $element.find("[itemprop]").addBack("[itemprop]");
-		const nestedItemTypes = $element.find("[itemtype]");
+		const foundProps = el.querySelectorAll("[itemprop]");
+		// Check if the element itself has itemprop (addBack behavior)
+		const allProps = el.getAttribute("itemprop") ? [el, ...foundProps] : [...foundProps];
+		const nestedItemTypes = el.querySelectorAll("[itemtype]");
 
 		// Filter out properties that are inside nested itemtype elements
-		const rootLevelProps = allProps.filter((_, propEl) => {
-			const $prop = $(propEl as Element);
-
+		const rootLevelProps = allProps.filter((propEl) => {
 			// If this element itself has itemtype, it's a nested object
-			if ($prop.attr("itemtype")) {
+			if (propEl.getAttribute("itemtype")) {
 				return true;
 			}
 
 			// Check if this property is inside any nested itemtype element
-			const isInsideNestedType = nestedItemTypes
-				.toArray()
-				.some((nestedEl) => $(nestedEl as Element).find($prop).length > 0);
+			const isInsideNestedType = nestedItemTypes.some((nestedEl) =>
+				nestedEl.querySelectorAll("[itemprop]").some((child) => child === propEl),
+			);
 
 			return !isInsideNestedType;
 		});
 
-		rootLevelProps.each((_, propEl) => {
-			const $prop = $(propEl as Element);
-			const propName = $prop.attr("itemprop");
+		for (const propEl of rootLevelProps) {
+			const propName = propEl.getAttribute("itemprop");
 			if (!propName) {
-				return;
+				continue;
 			}
 
 			let propValue: string | MicrodataObject | undefined;
 
 			// Check if this element has an itemtype (nested object)
-			const nestedItemType = $prop.attr("itemtype");
+			const nestedItemType = propEl.getAttribute("itemtype");
 			if (nestedItemType) {
 				const nestedObject: MicrodataObject = {};
 
@@ -107,29 +104,28 @@ export function extractMicrodata($: CheerioAPI, selector: string): MicrodataObje
 				}
 
 				// Extract properties from nested object (only direct children)
-				$prop.find("[itemprop]").each((_, nestedEl) => {
-					const $nested = $(nestedEl as Element);
-					const nestedProp = $nested.attr("itemprop");
+				for (const nestedEl of propEl.querySelectorAll("[itemprop]")) {
+					const nestedProp = nestedEl.getAttribute("itemprop");
 					if (!nestedProp) {
-						return;
+						continue;
 					}
 
-					const nestedValue = extractValueFromElement($nested);
+					const nestedValue = extractValueFromElement(nestedEl);
 					if (nestedValue && nestedValue !== "") {
 						addProperty(nestedObject, nestedProp, nestedValue);
 					}
-				});
+				}
 
 				propValue = nestedObject;
 			} else {
 				// Handle simple property values
-				propValue = extractValueFromElement($prop);
+				propValue = extractValueFromElement(propEl);
 			}
 
 			if (propValue !== undefined && propValue !== "") {
 				addProperty(rootObject, propName, propValue);
 			}
-		});
+		}
 
 		// Only add objects that have properties beyond just @type
 		if (
@@ -138,7 +134,7 @@ export function extractMicrodata($: CheerioAPI, selector: string): MicrodataObje
 		) {
 			results.push(rootObject);
 		}
-	});
+	}
 
 	return results;
 }
@@ -146,9 +142,9 @@ export function extractMicrodata($: CheerioAPI, selector: string): MicrodataObje
 /**
  * Extracts Recipe microdata specifically
  *
- * @param $ - Cheerio instance
+ * @param root - Parsed HTML root element
  * @returns Array of recipe microdata objects
  */
-export function extractRecipeMicrodata($: CheerioAPI): MicrodataObject[] {
-	return extractMicrodata($, '[itemtype*="schema.org/Recipe"], [itemtype*="Recipe"]');
+export function extractRecipeMicrodata(root: HTMLElement): MicrodataObject[] {
+	return extractMicrodata(root, '[itemtype*="schema.org/Recipe"], [itemtype*="Recipe"]');
 }

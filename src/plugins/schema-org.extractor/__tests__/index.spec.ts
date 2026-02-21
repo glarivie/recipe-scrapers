@@ -1,4 +1,4 @@
-import { load } from "cheerio";
+import { parse } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 
 import { ExtractionFailedException, UnsupportedFieldException } from "~/exceptions";
@@ -51,7 +51,7 @@ describe("SchemaOrgException", () => {
 });
 
 describe("SchemaOrgPlugin", () => {
-	const $ = load(minimalJsonLd);
+	const $ = parse(minimalJsonLd);
 	const plugin = new SchemaOrgPlugin($);
 
 	it("supports known recipe fields", () => {
@@ -101,7 +101,7 @@ describe("SchemaOrgPlugin", () => {
         "recipeIngredient": ["salt", "pepper", "salt", "garlic", "pepper"]
       }
       </script>`;
-		const dupePlugin = new SchemaOrgPlugin(load(jsonWithDupes));
+		const dupePlugin = new SchemaOrgPlugin(parse(jsonWithDupes));
 		const ingredients = dupePlugin.extract("ingredients");
 
 		expect(ingredients).toEqual([
@@ -137,13 +137,13 @@ describe("SchemaOrgPlugin", () => {
 	it("throws SchemaOrgException for missing required field", () => {
 		// JSON-LD missing 'name' for Recipe
 		const badJson = `<script type="application/ld+json">{"@type":"Recipe"}</script>`;
-		const badPlugin = new SchemaOrgPlugin(load(badJson));
+		const badPlugin = new SchemaOrgPlugin(parse(badJson));
 		expect(() => badPlugin.extract("title")).toThrow('No value found for "title"');
 	});
 
 	it("throws SchemaOrgException for invalid image", () => {
 		const badImgJson = `<script type="application/ld+json">{"@type":"Recipe","image":"nope"}</script>`;
-		const badPlugin = new SchemaOrgPlugin(load(badImgJson));
+		const badPlugin = new SchemaOrgPlugin(parse(badImgJson));
 		expect(() => badPlugin.extract("image")).toThrow('Invalid value for "image": nope');
 	});
 });

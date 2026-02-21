@@ -36,8 +36,8 @@ export class OpenGraphPlugin extends ExtractorPlugin {
 
 	private siteName() {
 		const meta =
-			this.$('meta[property="og:site_name"]').attr("content") ||
-			this.$('meta[name="og:site_name"]').attr("content");
+			this.$.querySelector('meta[property="og:site_name"]')?.getAttribute("content") ||
+			this.$.querySelector('meta[name="og:site_name"]')?.getAttribute("content");
 
 		if (!meta) {
 			throw new OpenGraphException("siteName");
@@ -47,7 +47,9 @@ export class OpenGraphPlugin extends ExtractorPlugin {
 	}
 
 	private image() {
-		const image = this.$('meta[property="og:image"][content]').attr("content");
+		const image = this.$.querySelector('meta[property="og:image"][content]')?.getAttribute(
+			"content",
+		);
 
 		if (!image?.startsWith("http")) {
 			throw new OpenGraphException("image");

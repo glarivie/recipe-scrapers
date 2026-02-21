@@ -6,7 +6,7 @@ export abstract class ExtractorPlugin extends AbstractPlugin {
 	abstract supports(field: keyof RecipeFields): boolean;
 
 	/**
-	 * Extracts the field from the cheerio root.
+	 * Extracts the field from the parsed HTML root.
 	 * @param field The field to extract
 	 * @returns The extracted field value
 	 */

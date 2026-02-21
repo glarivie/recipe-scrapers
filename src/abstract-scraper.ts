@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import { type HTMLElement, parse } from "node-html-parser";
 import type { ParseIngredientOptions } from "parse-ingredient";
 import * as v from "valibot";
 
@@ -23,7 +23,7 @@ export abstract class AbstractScraper {
 	protected readonly pluginManager: PluginManager;
 	protected readonly recipeExtractor: RecipeExtractor;
 
-	public readonly $: cheerio.CheerioAPI;
+	public readonly $: HTMLElement;
 	public recipeData: RecipeData | null = null;
 
 	constructor(
@@ -39,7 +39,7 @@ export abstract class AbstractScraper {
 		} = options;
 
 		this.logger = new Logger(this.constructor.name, logLevel);
-		this.$ = cheerio.load(html);
+		this.$ = parse(html);
 
 		const baseExtractors: ExtractorPlugin[] = [
 			new OpenGraphPlugin(this.$),
@@ -111,7 +111,7 @@ export abstract class AbstractScraper {
 	 ****************************************************************************/
 
 	canonicalUrl(): RecipeFields["canonicalUrl"] {
-		const canonicalLink = this.$('link[rel="canonical"]').attr("href");
+		const canonicalLink = this.$.querySelector('link[rel="canonical"]')?.getAttribute("href");
 
 		const base = new URL(this.url.startsWith("http") ? this.url : `https://${this.url}`);
 
@@ -119,7 +119,7 @@ export abstract class AbstractScraper {
 	}
 
 	language(): RecipeFields["language"] {
-		const langAttr = this.$("html").attr("lang");
+		const langAttr = this.$.querySelector("html")?.getAttribute("lang");
 
 		if (langAttr) {
 			return langAttr;
@@ -127,7 +127,9 @@ export abstract class AbstractScraper {
 
 		// Deprecated: check for a meta http-equiv header
 		// See: https://www.w3.org/International/questions/qa-http-and-lang
-		const metaLang = this.$('meta[http-equiv="content-language"]').attr("content");
+		const metaLang = this.$.querySelector('meta[http-equiv="content-language"]')?.getAttribute(
+			"content",
+		);
 
 		if (metaLang) {
 			return metaLang.split(",")[0];
@@ -143,16 +145,15 @@ export abstract class AbstractScraper {
 			return undefined;
 		}
 
-		return this.$("a[href]")
-			.map((_, el) => {
-				const href = this.$(el).attr("href");
+		return this.$.querySelectorAll("a[href]")
+			.map((el) => {
+				const href = el.getAttribute("href");
 				if (!href?.startsWith("http")) {
 					return null;
 				}
-				return { href, text: this.$(el).text().trim() };
+				return { href, text: el.textContent.trim() };
 			})
-			.get()
-			.filter(Boolean);
+			.filter(Boolean) as { href: string; text: string }[];
 	}
 
 	/**

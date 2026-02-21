@@ -1,4 +1,4 @@
-import { load } from "cheerio";
+import { parse } from "node-html-parser";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { ExtractorNotFoundException } from "~/exceptions";
@@ -26,14 +26,14 @@ describe("OpenGraphPlugin", () => {
 	let plugin: OpenGraphPlugin;
 
 	it("has correct name and priority", () => {
-		plugin = new OpenGraphPlugin(load(htmlWithMeta));
+		plugin = new OpenGraphPlugin(parse(htmlWithMeta));
 		expect(plugin.name).toBe("OpenGraphPlugin");
 		expect(plugin.priority).toBe(60);
 	});
 
 	describe("supports()", () => {
 		beforeEach(() => {
-			plugin = new OpenGraphPlugin(load(htmlWithMeta));
+			plugin = new OpenGraphPlugin(parse(htmlWithMeta));
 		});
 
 		it("returns true for supported fields", () => {
@@ -50,25 +50,25 @@ describe("OpenGraphPlugin", () => {
 
 	describe("extract()", () => {
 		it("extracts siteName from property meta tag", () => {
-			plugin = new OpenGraphPlugin(load(htmlWithMeta));
+			plugin = new OpenGraphPlugin(parse(htmlWithMeta));
 			const value = plugin.extract("siteName");
 			expect(value).toBe("Test Site");
 		});
 
 		it("extracts siteName from name meta tag if property missing", () => {
-			plugin = new OpenGraphPlugin(load(htmlWithNameOnly));
+			plugin = new OpenGraphPlugin(parse(htmlWithNameOnly));
 			const value = plugin.extract("siteName");
 			expect(value).toBe("Alt Site");
 		});
 
 		it("extracts valid image URL", () => {
-			plugin = new OpenGraphPlugin(load(htmlWithMeta));
+			plugin = new OpenGraphPlugin(parse(htmlWithMeta));
 			const img = plugin.extract("image");
 			expect(img).toBe("http://example.com/image.jpg");
 		});
 
 		it("throws OpenGraphException when siteName meta missing", () => {
-			plugin = new OpenGraphPlugin(load("<html></html>"));
+			plugin = new OpenGraphPlugin(parse("<html></html>"));
 			expect(() => plugin.extract("siteName")).toThrow(OpenGraphException);
 			try {
 				plugin.extract("siteName");
@@ -80,7 +80,7 @@ describe("OpenGraphPlugin", () => {
 		});
 
 		it("throws OpenGraphException when image URL is invalid", () => {
-			plugin = new OpenGraphPlugin(load(htmlWithBadImage));
+			plugin = new OpenGraphPlugin(parse(htmlWithBadImage));
 			expect(() => plugin.extract("image")).toThrow(OpenGraphException);
 			try {
 				plugin.extract("image");
@@ -91,7 +91,7 @@ describe("OpenGraphPlugin", () => {
 		});
 
 		it("throws ExtractorNotFoundException for unsupported field", () => {
-			plugin = new OpenGraphPlugin(load(htmlWithMeta));
+			plugin = new OpenGraphPlugin(parse(htmlWithMeta));
 			expect(() => plugin.extract("name" as keyof RecipeFields)).toThrow(
 				ExtractorNotFoundException,
 			);
