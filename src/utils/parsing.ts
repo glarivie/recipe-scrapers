@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Utility functions for common parsing tasks
  ******************************************************************************/
-import { parse as parseDuration, toSeconds } from "iso8601-duration";
+import { parse as parseDuration } from "tinyduration";
 
 export function normalizeString(str: string | null | undefined): string {
 	return (
@@ -36,7 +36,8 @@ export function splitToList(value: string, separator: string | RegExp): string[]
  * @TODO Implement [Temporal.Duration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration) once it lands.
  */
 export function parseMinutes(value: string) {
-	const duration = parseDuration(value);
-	const totalSeconds = toSeconds(duration);
+	const { days, hours, minutes, seconds } = parseDuration(value);
+	const totalSeconds =
+		(days ?? 0) * 86400 + (hours ?? 0) * 3600 + (minutes ?? 0) * 60 + (seconds ?? 0);
 	return Math.round(totalSeconds / 60);
 }

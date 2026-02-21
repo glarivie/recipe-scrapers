@@ -65,6 +65,6 @@ describe("parseMinutes", () => {
 	});
 
 	it("throws on invalid input", () => {
-		expect(() => parseMinutes("")).toThrow("invalid duration");
+		expect(() => parseMinutes("")).toThrow("Invalid duration");
 	});
 });
