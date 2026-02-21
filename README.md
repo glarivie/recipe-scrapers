@@ -1,10 +1,10 @@
-# Recipe Scrapers JS
+# Recipe Scrapers
 
-[![npm version](https://img.shields.io/npm/v/recipe-scrapers-js.svg?style=flat-square)](https://www.npmjs.com/package/recipe-scrapers-js)
-[![build](https://img.shields.io/github/actions/workflow/status/nerdstep/recipe-scrapers-js/ci.yml?branch=main&style=flat-square)](https://github.com/nerdstep/recipe-scrapers-js/actions)
-[![license](https://img.shields.io/npm/l/recipe-scrapers-js.svg?style=flat-square)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/recipe-scrapers.svg?style=flat-square)](https://www.npmjs.com/package/recipe-scrapers)
+[![build](https://img.shields.io/github/actions/workflow/status/glarivie/recipe-scrapers/ci.yml?branch=main&style=flat-square)](https://github.com/glarivie/recipe-scrapers/actions)
+[![license](https://img.shields.io/npm/l/recipe-scrapers.svg?style=flat-square)](LICENSE)
 
-A TypeScript/JavaScript library for scraping recipe data from various cooking websites. This is a JavaScript port inspired by the Python [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) library.
+A TypeScript/JavaScript library for scraping recipe data from various cooking websites. Inspired by the Python [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) library.
 
 ## Features
 
@@ -16,14 +16,16 @@ A TypeScript/JavaScript library for scraping recipe data from various cooking we
 
 ## Installation
 
+Add the `recipe-scrapers` package and its peer dependencies.
+
 ```bash
-npm install recipe-scrapers-js
+npm install recipe-scrapers cheerio zod
 # or
-yarn add recipe-scrapers-js
+yarn add recipe-scrapers cheerio zod
 # or
-pnpm add recipe-scrapers-js
+pnpm add recipe-scrapers cheerio zod
 # or
-bun add recipe-scrapers-js
+bun add recipe-scrapers cheerio zod
 ```
 
 ## Usage
@@ -31,7 +33,7 @@ bun add recipe-scrapers-js
 ### Basic Usage
 
 ```typescript
-import { getScraper } from 'recipe-scrapers-js'
+import { getScraper } from 'recipe-scrapers'
 
 const html = `<html>The html to scrape...</html>`
 const url = 'https://allrecipes.com/recipe/example'
@@ -106,8 +108,8 @@ This library supports recipe extraction from various popular cooking websites. T
 
 ```bash
 # Clone the repository
-git clone https://github.com/nerdstep/recipe-scrapers-js.git
-cd recipe-scrapers-js
+git clone https://github.com/glarivie/recipe-scrapers.git
+cd recipe-scrapers
 
 # Install dependencies
 bun install
@@ -173,7 +175,7 @@ export class NewSiteScraper extends AbstractScraper {
       },
     ]
   }
-  
+
   // ... implement other extraction methods
 }
 ```
@@ -206,7 +208,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Original [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) Python library by [hhursev](https://github.com/hhursev)
+- Originally forked from [recipe-scrapers-js](https://github.com/nerdstep/recipe-scrapers-js) by [nerdstep](https://github.com/nerdstep)
+- Inspired by the Python [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) library by [hhursev](https://github.com/hhursev)
 - [Schema.org Recipe specification](https://schema.org/Recipe)
 - [Cheerio](https://cheerio.js.org/) for HTML parsing
 - [Zod](https://zod.dev/) for schema validation

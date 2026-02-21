@@ -70,5 +70,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Prior to version 1.0.0-rc.0, this project was in alpha development. No formal changelog was maintained during the alpha phase.
 
-[1.0.0]: https://github.com/nerdstep/recipe-scrapers-js/releases/tag/v1.0.0
-[1.0.0-rc.0]: https://github.com/nerdstep/recipe-scrapers-js/releases/tag/v1.0.0-rc.0
+[1.0.0]: https://github.com/glarivie/recipe-scrapers/releases/tag/v1.0.0
+[1.0.0-rc.0]: https://github.com/glarivie/recipe-scrapers/releases/tag/v1.0.0-rc.0

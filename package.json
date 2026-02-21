@@ -1,15 +1,19 @@
 {
-  "name": "recipe-scrapers-js",
+  "name": "recipe-scrapers",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "A recipe scrapers library",
+  "description": "A TypeScript library for scraping recipe data from cooking websites",
   "author": {
-    "name": "Justin Williams",
-    "url": "https://github.com/nerdstep"
+    "name": "Guillaume L.",
+    "url": "https://github.com/glarivie"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nerdstep/recipe-scrapers-js.git"
+    "url": "git+https://github.com/glarivie/recipe-scrapers.git"
+  },
+  "homepage": "https://github.com/glarivie/recipe-scrapers#readme",
+  "bugs": {
+    "url": "https://github.com/glarivie/recipe-scrapers/issues"
   },
   "type": "module",
   "module": "dist/index.mjs",
