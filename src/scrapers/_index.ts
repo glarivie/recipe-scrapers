@@ -13,11 +13,19 @@ import { Tasty } from "./tasty";
 import { ThePioneerWoman } from "./thepioneerwoman";
 
 function createScraper(host: string): typeof AbstractScraper {
-	return class extends AbstractScraper {
+	const scraperClass = class extends AbstractScraper {
 		static host() {
 			return host;
 		}
 	};
+
+	// Give the dynamic class a readable name for debugging/logging
+	Object.defineProperty(scraperClass, "name", {
+		value: host.replace(/\./g, "_"),
+		configurable: true,
+	});
+
+	return scraperClass;
 }
 
 const schemaOrgScrapers = Object.fromEntries(
