@@ -186,7 +186,7 @@ export function applyRecipeValidations(schema: v.GenericSchema<unknown, RecipeOb
 		v.transform((data) => {
 			// Auto-fix: calculate totalTime if missing but cook and prep times exist
 			if (!data.totalTime && !isNull(data.cookTime) && !isNull(data.prepTime)) {
-				data.totalTime = data.cookTime + data.prepTime;
+				return { ...data, totalTime: data.cookTime + data.prepTime };
 			}
 			return data;
 		}),
