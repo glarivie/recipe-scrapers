@@ -157,7 +157,7 @@ export abstract class AbstractScraper {
 	}
 
 	/**
-	 * Scrape's the recipe and caches the data.
+	 * Scrapes the recipe and caches the data.
 	 */
 	public async scrape(): Promise<RecipeData> {
 		const instance = this.constructor as typeof AbstractScraper;
@@ -226,7 +226,7 @@ export abstract class AbstractScraper {
 	}
 
 	/**
-	 * Get the Zod schema to use for validation.
+	 * Get the Valibot schema to use for validation.
 	 * Subclasses can override to provide custom schemas.
 	 */
 	protected getSchema() {
@@ -235,10 +235,9 @@ export abstract class AbstractScraper {
 
 	/**
 	 * Extract and validate recipe data.
-	 * Throws ZodError if validation fails.
 	 *
 	 * @returns Validated recipe object
-	 * @throws {ZodError} If validation fails
+	 * @throws {ValiError} If validation fails
 	 */
 	async parse(): Promise<RecipeObject> {
 		const raw = await this.toRecipeObject();
@@ -248,9 +247,8 @@ export abstract class AbstractScraper {
 
 	/**
 	 * Extract and validate recipe data without throwing.
-	 * Returns a result object indicating success or failure.
 	 *
-	 * @returns Result object with either data or error
+	 * @returns SafeParseResult with either output or issues
 	 */
 	async safeParse(): Promise<v.SafeParseResult<typeof RecipeObjectSchema>> {
 		const raw = await this.toRecipeObject();
