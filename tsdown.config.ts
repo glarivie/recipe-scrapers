@@ -1,8 +1,17 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-	entry: ["./src/index.ts"],
+	entry: ["src/index.ts"],
+	outDir: "dist",
+	format: "esm",
 	dts: true,
-	format: ["esm"],
 	sourcemap: true,
+	clean: true,
+	external: [
+		"node-html-parser",
+		"valibot",
+		"tinyduration",
+		"parse-ingredient",
+		"jsonrepair",
+	],
 });
