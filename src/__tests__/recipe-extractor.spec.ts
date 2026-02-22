@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
 import { ExtractionFailedException, ExtractorNotFoundException } from "../exceptions";
+import { Logger } from "../logger";
 import { RecipeExtractor } from "../recipe-extractor";
 import type { RecipeFields } from "../types/recipe.interface";
 
@@ -109,10 +110,16 @@ describe("RecipeExtractor", () => {
 			},
 		} as ExtractorPlugin;
 
+		const warnSpy = vi.spyOn(Logger.prototype, "warn");
+
 		const extractor = new RecipeExtractor([plugin], scraperName);
-		// Unexpected error is logged as a warning, not rethrown
-		// Extraction falls through to ExtractorNotFoundException
 		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('Unexpected error extracting "title"'),
+			expect.any(TypeError),
+		);
+
+		warnSpy.mockRestore();
 	});
 
 	it("handles ExtractionFailedException from plugins gracefully", async () => {
@@ -126,9 +133,13 @@ describe("RecipeExtractor", () => {
 			},
 		} as ExtractorPlugin;
 
+		const debugSpy = vi.spyOn(Logger.prototype, "debug");
+
 		const extractor = new RecipeExtractor([plugin], scraperName);
-		// Should not throw — falls through to ExtractorNotFoundException
 		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+		expect(debugSpy).toHaveBeenCalledWith(expect.stringContaining("title"));
+
+		debugSpy.mockRestore();
 	});
 
 	it("logs unexpected site-extractor errors as warnings and falls through", async () => {
@@ -140,13 +151,19 @@ describe("RecipeExtractor", () => {
 			extract: () => "X",
 		} as ExtractorPlugin;
 
+		const warnSpy = vi.spyOn(Logger.prototype, "warn");
+
 		const extractor = new RecipeExtractor([plugin], scraperName);
-		// Unexpected error is logged as a warning, not rethrown
-		// Extraction falls through to ExtractorNotFoundException
 		await expect(
 			extractor.extract("title", () => {
 				throw new RangeError("out of range");
 			}),
 		).rejects.toThrow(ExtractorNotFoundException);
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('Unexpected error in site extractor for "title"'),
+			expect.any(RangeError),
+		);
+
+		warnSpy.mockRestore();
 	});
 });
