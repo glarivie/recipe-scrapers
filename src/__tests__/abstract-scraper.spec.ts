@@ -89,9 +89,9 @@ describe("AbstractScraper utility methods", () => {
       <a href="/local">Local</a>
       <a>No href</a>
     `;
-		it("returns undefined when linksEnabled is false", () => {
+		it("returns empty array when linksEnabled is false", () => {
 			scraper = new DummyScraper(html, "url", { linksEnabled: false });
-			expect(scraper.links()).toBeUndefined();
+			expect(scraper.links()).toEqual([]);
 		});
 
 		it("returns only absolute links when linksEnabled is true", () => {
