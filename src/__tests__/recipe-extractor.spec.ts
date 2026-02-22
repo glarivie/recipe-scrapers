@@ -2,7 +2,7 @@ import { parse } from "node-html-parser";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
-import { ExtractorNotFoundException } from "../exceptions";
+import { ExtractionFailedException, ExtractorNotFoundException } from "../exceptions";
 import { RecipeExtractor } from "../recipe-extractor";
 import type { RecipeFields } from "../types/recipe.interface";
 
@@ -96,5 +96,57 @@ describe("RecipeExtractor", () => {
 		const extractor = new RecipeExtractor([plugin], scraperName);
 		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
 		await expect(extractor.extract("title")).rejects.toThrow("No extractor found for field: title");
+	});
+
+	it("logs unexpected plugin errors as warnings and falls through", async () => {
+		const plugin = {
+			name: "Broken",
+			priority: 10,
+			$: parse("<html><body></body></html>"),
+			supports: () => true,
+			extract: () => {
+				throw new TypeError("Cannot read properties of undefined");
+			},
+		} as ExtractorPlugin;
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		// Unexpected error is logged as a warning, not rethrown
+		// Extraction falls through to ExtractorNotFoundException
+		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+	});
+
+	it("handles ExtractionFailedException from plugins gracefully", async () => {
+		const plugin = {
+			name: "Missing",
+			priority: 10,
+			$: parse("<html><body></body></html>"),
+			supports: () => true,
+			extract: () => {
+				throw new ExtractionFailedException("title");
+			},
+		} as ExtractorPlugin;
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		// Should not throw — falls through to ExtractorNotFoundException
+		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+	});
+
+	it("logs unexpected site-extractor errors as warnings and falls through", async () => {
+		const plugin = {
+			name: "X",
+			priority: 0,
+			$: parse("<html><body></body></html>"),
+			supports: () => false,
+			extract: () => "X",
+		} as ExtractorPlugin;
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		// Unexpected error is logged as a warning, not rethrown
+		// Extraction falls through to ExtractorNotFoundException
+		await expect(
+			extractor.extract("title", () => {
+				throw new RangeError("out of range");
+			}),
+		).rejects.toThrow(ExtractorNotFoundException);
 	});
 });
