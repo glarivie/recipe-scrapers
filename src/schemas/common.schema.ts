@@ -7,16 +7,15 @@ const HOSTNAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
 /**
  * Helper to create a required, non-empty string field
  */
-export const vString = (fieldName: string, { min = 1, max = 0 } = {}) =>
-	v.pipe(
+export const vString = (fieldName: string, { min = 1, max = 0 } = {}) => {
+	const resolvedMax = max > 0 ? max : MAX_STRING_LENGTH;
+	return v.pipe(
 		v.string(`${fieldName} must be a string`),
 		v.minLength(min, `${fieldName} cannot be empty`),
-		v.maxLength(
-			max > 0 ? max : MAX_STRING_LENGTH,
-			`${fieldName} must be less than ${max} characters`,
-		),
+		v.maxLength(resolvedMax, `${fieldName} must be less than ${resolvedMax} characters`),
 		v.transform((s) => s.trim()),
 	);
+};
 
 /**
  * Helper to create a URL string field
