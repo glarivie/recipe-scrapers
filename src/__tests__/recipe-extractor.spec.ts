@@ -43,7 +43,8 @@ describe("RecipeExtractor", () => {
 		const spyLow = vi.spyOn(low, "extract");
 		const spyHigh = vi.spyOn(high, "extract");
 
-		const extractor = new RecipeExtractor([low, high], scraperName);
+		// Plugins should be passed pre-sorted (highest priority first), as PluginManager handles sorting
+		const extractor = new RecipeExtractor([high, low], scraperName);
 		const result = await extractor.extract("title");
 		expect(result).toBe("H1");
 		expect(spyHigh).toHaveBeenCalled();
