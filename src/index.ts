@@ -1,6 +1,3 @@
-import type * as v from "valibot";
-
-import type { RecipeObjectSchema } from "~/schemas/recipe.schema";
 import type { RecipeObject } from "~/types/recipe.interface";
 import type { ScraperOptions } from "~/types/scraper.interface";
 
@@ -52,11 +49,7 @@ export async function scrapeRecipe(
  * Scrape a recipe from HTML with safe validation (no throw).
  * Falls back to generic Schema.org extraction for unsupported sites (wild mode).
  */
-export async function safeScrapeRecipe(
-	html: string,
-	url: string,
-	options?: ScraperOptions,
-): Promise<v.SafeParseResult<typeof RecipeObjectSchema>> {
+export async function safeScrapeRecipe(html: string, url: string, options?: ScraperOptions) {
 	const hostName = getHostName(url);
 	const ScraperClass = scrapers[hostName] ?? GenericScraper;
 	const scraper = new ScraperClass(html, url, options);

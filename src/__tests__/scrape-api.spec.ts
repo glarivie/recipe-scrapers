@@ -15,10 +15,7 @@ describe("scrapeRecipe", () => {
 	});
 
 	it("scrapes an unknown host via wild mode (GenericScraper)", async () => {
-		const result = await scrapeRecipe(
-			allrecipesHtml,
-			"https://unknown-recipe-site.example.com/r",
-		);
+		const result = await scrapeRecipe(allrecipesHtml, "https://unknown-recipe-site.example.com/r");
 		expect(result.title).toBeDefined();
 		expect(result.host).toBe("unknown-recipe-site.example.com");
 	});
