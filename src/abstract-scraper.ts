@@ -166,33 +166,49 @@ export abstract class AbstractScraper {
 			return this.recipeData;
 		}
 
+		const fields = [
+			"author",
+			"category",
+			"cookTime",
+			"cookingMethod",
+			"cuisine",
+			"description",
+			"dietaryRestrictions",
+			"equipment",
+			"image",
+			"ingredients",
+			"instructions",
+			"keywords",
+			"nutrients",
+			"prepTime",
+			"ratings",
+			"ratingsCount",
+			"reviews",
+			"siteName",
+			"title",
+			"totalTime",
+			"yields",
+		] as const;
+
+		const results = await Promise.allSettled(
+			fields.map((field) => this.extract(field).then((value) => [field, value] as const)),
+		);
+
+		const extracted: Record<string, unknown> = {};
+		for (const result of results) {
+			if (result.status === "fulfilled") {
+				const [field, value] = result.value;
+				extracted[field] = value;
+			}
+		}
+
 		this.recipeData = {
-			author: await this.extract("author"),
+			...extracted,
 			canonicalUrl: this.canonicalUrl(),
-			category: await this.extract("category"),
-			cookTime: await this.extract("cookTime"),
-			cookingMethod: await this.extract("cookingMethod"),
-			cuisine: await this.extract("cuisine"),
-			description: await this.extract("description"),
-			dietaryRestrictions: await this.extract("dietaryRestrictions"),
-			equipment: await this.extract("equipment"),
 			host: instance.host(),
-			image: await this.extract("image"),
-			ingredients: await this.extract("ingredients"),
-			instructions: await this.extract("instructions"),
-			keywords: await this.extract("keywords"),
 			language: this.language(),
 			links: this.links(),
-			nutrients: await this.extract("nutrients"),
-			prepTime: await this.extract("prepTime"),
-			ratings: await this.extract("ratings"),
-			ratingsCount: await this.extract("ratingsCount"),
-			reviews: await this.extract("reviews"),
-			siteName: await this.extract("siteName"),
-			title: await this.extract("title"),
-			totalTime: await this.extract("totalTime"),
-			yields: await this.extract("yields"),
-		};
+		} as RecipeData;
 
 		return this.recipeData;
 	}
