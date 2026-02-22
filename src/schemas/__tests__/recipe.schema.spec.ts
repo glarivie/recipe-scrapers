@@ -456,6 +456,18 @@ describe("RecipeObjectSchema", () => {
 		expect(result.totalTime).toBe(50);
 	});
 
+	it("should not mutate the input object when auto-calculating totalTime", () => {
+		const recipe = {
+			...validRecipe,
+			totalTime: null,
+			cookTime: 20,
+			prepTime: 15,
+		};
+		const result = v.parse(RecipeObjectSchema, recipe);
+		expect(result.totalTime).toBe(35);
+		expect(recipe.totalTime).toBeNull();
+	});
+
 	it("should skip totalTime validation when any time is null", () => {
 		const recipe = {
 			...validRecipe,
