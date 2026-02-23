@@ -29,9 +29,7 @@ jobs:
         run: pnpm run lint
 
       - name: Run tests
-        run: pnpm run test:coverage
-        env:
-          CI: true
+        run: pnpm test
 
       - name: Build
         run: pnpm run build
