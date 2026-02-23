@@ -79,13 +79,21 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 		dietaryRestrictions: this.dietaryRestrictions.bind(this),
 	};
 
+	private initialized = false;
+
 	constructor($: HTMLElement, logLevel?: LogLevel) {
 		super($);
-
 		this.logger = new Logger(SchemaOrgPlugin.name, logLevel);
+	}
+
+	private ensureInitialized() {
+		if (this.initialized) {
+			return;
+		}
 		this.extractJsonLdData();
 		this.extractMicrodataData();
 		this.processSchemaData();
+		this.initialized = true;
 	}
 
 	supports(field: keyof RecipeFields): boolean {
@@ -93,6 +101,7 @@ export class SchemaOrgPlugin extends ExtractorPlugin {
 	}
 
 	extract<Key extends keyof RecipeFields>(field: Key): RecipeFields[Key] {
+		this.ensureInitialized();
 		const extractor = this.extractors[field];
 
 		if (!isFunction(extractor)) {

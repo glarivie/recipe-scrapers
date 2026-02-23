@@ -142,7 +142,7 @@ export abstract class AbstractScraper {
 
 	links(): RecipeFields["links"] {
 		if (!this.options.linksEnabled) {
-			return undefined;
+			return [];
 		}
 
 		return this.$.querySelectorAll("a[href]")
@@ -208,6 +208,7 @@ export abstract class AbstractScraper {
 			dietaryRestrictions,
 			equipment,
 			keywords,
+			links,
 			nutrients,
 			reviews,
 			...rest
@@ -220,6 +221,7 @@ export abstract class AbstractScraper {
 			dietaryRestrictions: Array.from(dietaryRestrictions),
 			equipment: Array.from(equipment),
 			keywords: Array.from(keywords),
+			...(links && links.length > 0 ? { links } : {}),
 			nutrients: Object.fromEntries(nutrients),
 			reviews: Object.fromEntries(reviews),
 		};
