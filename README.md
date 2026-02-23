@@ -1,7 +1,7 @@
 # Recipe Scrapers
 
 [![npm version](https://img.shields.io/npm/v/recipe-scrapers.svg?style=flat-square)](https://www.npmjs.com/package/recipe-scrapers)
-[![build](https://img.shields.io/github/actions/workflow/status/glarivie/recipe-scrapers/ci.yml?branch=main&style=flat-square)](https://github.com/glarivie/recipe-scrapers/actions)
+[![build](https://img.shields.io/github/actions/workflow/status/glarivie/recipe-scrapers/checks.yml?branch=main&style=flat-square)](https://github.com/glarivie/recipe-scrapers/actions)
 [![license](https://img.shields.io/npm/l/recipe-scrapers.svg?style=flat-square)](LICENSE)
 
 A TypeScript/JavaScript library for scraping recipe data from various cooking websites. Inspired by the Python [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) library.
@@ -11,21 +11,16 @@ A TypeScript/JavaScript library for scraping recipe data from various cooking we
 - Extract structured recipe data from cooking websites
 - Support for multiple popular recipe sites
 - Built with TypeScript for better developer experience
-- Fast and lightweight using the Bun runtime for development and testing
 - Comprehensive test coverage
 
 ## Installation
 
-Add the `recipe-scrapers` package and its peer dependencies.
-
 ```bash
-npm install recipe-scrapers cheerio zod
+npm install recipe-scrapers
 # or
-yarn add recipe-scrapers cheerio zod
+yarn add recipe-scrapers
 # or
-pnpm add recipe-scrapers cheerio zod
-# or
-bun add recipe-scrapers cheerio zod
+pnpm add recipe-scrapers
 ```
 
 ## Usage
@@ -102,7 +97,8 @@ This library supports recipe extraction from various popular cooking websites. T
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (latest version)
+- [Node.js](https://nodejs.org/) >= 24
+- [pnpm](https://pnpm.io/)
 
 ### Setup
 
@@ -112,36 +108,36 @@ git clone https://github.com/glarivie/recipe-scrapers.git
 cd recipe-scrapers
 
 # Install dependencies
-bun install
+pnpm install
 
 # Run tests
-bun test
+pnpm test
 
 # Build the project
-bun run build
+pnpm run build
 ```
 
 ### Scripts
 
-- `bun run build` - Build the library for distribution
-- `bun test` - Run the test suite
-- `bun test:coverage` - Run tests with a coverage report
-- `bun fetch-test-data` - Fetch test data from the original Python repository
-- `bun lint` - Run linting and type checking
-- `bun lint:fix` - Fix linting issues automatically
+- `pnpm run build` - Build the library for distribution
+- `pnpm test` - Run the test suite
+- `pnpm run test:coverage` - Run tests with coverage report
+- `pnpm run fetch-test-data` - Fetch test data from the original Python repository
+- `pnpm run lint` - Run linting and type checking
+- `pnpm run lint:fix` - Fix linting issues automatically
 
 ### Adding New Scrapers
 
 1. Fetch test data from the original Python repository
 
     ```bash
-    bun fetch-test-data
+    pnpm run fetch-test-data
     ```
 
 2. Convert the data into the expected JSON format (i.e. the `RecipeObject` interface)
 
     ```bash
-    bun process-test-data <host>
+    pnpm run process-test-data <host>
     ```
 
 3. Create a new scraper class extending `AbstractScraper`
@@ -152,7 +148,7 @@ bun run build
 
 ```typescript
 import { AbstractScraper } from './abstract-scraper'
-import type { RecipeFields } from '@/types/recipe.interface'
+import type { RecipeFields } from '~/types/recipe.interface'
 
 export class NewSiteScraper extends AbstractScraper {
   static host() {
@@ -192,14 +188,14 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## Testing
 
-The project uses test data from the original Python recipe-scrapers repository to ensure compatibility and accuracy. Tests are written using Bun's built-in test runner.
+The project uses test data from the original Python recipe-scrapers repository to ensure compatibility and accuracy. Tests are written using [Vitest](https://vitest.dev/).
 
 ```bash
 # Run all tests
-bun test
+pnpm test
 
 # Run tests with coverage
-bun test:coverage
+pnpm run test:coverage
 ```
 
 ## License
@@ -211,8 +207,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Originally forked from [recipe-scrapers-js](https://github.com/nerdstep/recipe-scrapers-js) by [nerdstep](https://github.com/nerdstep)
 - Inspired by the Python [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) library by [hhursev](https://github.com/hhursev)
 - [Schema.org Recipe specification](https://schema.org/Recipe)
-- [Cheerio](https://cheerio.js.org/) for HTML parsing
-- [Zod](https://zod.dev/) for schema validation
+- [node-html-parser](https://github.com/taoqf/node-html-parser) for HTML parsing
+- [Valibot](https://valibot.dev/) for schema validation
 - [parse-ingredient](https://github.com/jakeboone02/parse-ingredient) for ingredient parsing
 
 ## Copyright and Usage

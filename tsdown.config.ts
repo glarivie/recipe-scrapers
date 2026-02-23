@@ -7,11 +7,5 @@ export default defineConfig({
 	dts: true,
 	sourcemap: true,
 	clean: true,
-	external: [
-		"node-html-parser",
-		"valibot",
-		"tinyduration",
-		"parse-ingredient",
-		"jsonrepair",
-	],
+	external: ["node-html-parser", "valibot", "tinyduration", "parse-ingredient", "jsonrepair"],
 });
