@@ -9,14 +9,11 @@ export class RecipeExtractor {
 	private readonly logger: Logger;
 
 	constructor(
-		private plugins: ExtractorPlugin[],
+		private readonly plugins: ExtractorPlugin[],
 		private readonly scraperName: string,
 		private readonly options: { logLevel?: LogLevel } = {},
 	) {
 		this.logger = new Logger(this.getContext(), this.options.logLevel);
-
-		// Sort plugins by priority in descending order (higher priority first)
-		this.plugins.sort((a, b) => b.priority - a.priority);
 	}
 
 	private getContext(context?: string) {

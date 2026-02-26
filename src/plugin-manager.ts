@@ -23,10 +23,10 @@ export class PluginManager {
 	}
 
 	getExtractors() {
-		return this.extractorPlugins;
+		return [...this.extractorPlugins];
 	}
 
 	getPostProcessors() {
-		return this.postProcessorPlugins;
+		return [...this.postProcessorPlugins];
 	}
 }
