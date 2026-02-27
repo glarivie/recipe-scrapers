@@ -47,9 +47,9 @@ export class RecipeExtractor {
 					result = await plugin.extract(field);
 				} catch (err) {
 					if (err instanceof ExtractionFailedException) {
-						pluginLogger.verbose(err.message);
+						pluginLogger.debug(err.message);
 					} else {
-						pluginLogger.error(err);
+						pluginLogger.warn(`Unexpected error extracting "${field}":`, err);
 					}
 				}
 			} else {
@@ -66,7 +66,11 @@ export class RecipeExtractor {
 				result = await extractor(result);
 				this.logger.verbose(`Site result for ${field}: `, result);
 			} catch (err) {
-				this.logger.error(err);
+				if (err instanceof ExtractionFailedException) {
+					this.logger.debug(err.message);
+				} else {
+					this.logger.warn(`Unexpected error in site extractor for "${field}":`, err);
+				}
 			}
 		}
 

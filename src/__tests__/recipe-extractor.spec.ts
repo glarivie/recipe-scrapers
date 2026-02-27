@@ -2,7 +2,8 @@ import { parse } from "node-html-parser";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ExtractorPlugin } from "../abstract-extractor-plugin";
-import { ExtractorNotFoundException } from "../exceptions";
+import { ExtractionFailedException, ExtractorNotFoundException } from "../exceptions";
+import { Logger } from "../logger";
 import { RecipeExtractor } from "../recipe-extractor";
 import type { RecipeFields } from "../types/recipe.interface";
 
@@ -96,5 +97,73 @@ describe("RecipeExtractor", () => {
 		const extractor = new RecipeExtractor([plugin], scraperName);
 		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
 		await expect(extractor.extract("title")).rejects.toThrow("No extractor found for field: title");
+	});
+
+	it("logs unexpected plugin errors as warnings and falls through", async () => {
+		const plugin = {
+			name: "Broken",
+			priority: 10,
+			$: parse("<html><body></body></html>"),
+			supports: () => true,
+			extract: () => {
+				throw new TypeError("Cannot read properties of undefined");
+			},
+		} as ExtractorPlugin;
+
+		const warnSpy = vi.spyOn(Logger.prototype, "warn");
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('Unexpected error extracting "title"'),
+			expect.any(TypeError),
+		);
+
+		warnSpy.mockRestore();
+	});
+
+	it("handles ExtractionFailedException from plugins gracefully", async () => {
+		const plugin = {
+			name: "Missing",
+			priority: 10,
+			$: parse("<html><body></body></html>"),
+			supports: () => true,
+			extract: () => {
+				throw new ExtractionFailedException("title");
+			},
+		} as ExtractorPlugin;
+
+		const debugSpy = vi.spyOn(Logger.prototype, "debug");
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		await expect(extractor.extract("title")).rejects.toThrow(ExtractorNotFoundException);
+		expect(debugSpy).toHaveBeenCalledWith(expect.stringContaining("title"));
+
+		debugSpy.mockRestore();
+	});
+
+	it("logs unexpected site-extractor errors as warnings and falls through", async () => {
+		const plugin = {
+			name: "X",
+			priority: 0,
+			$: parse("<html><body></body></html>"),
+			supports: () => false,
+			extract: () => "X",
+		} as ExtractorPlugin;
+
+		const warnSpy = vi.spyOn(Logger.prototype, "warn");
+
+		const extractor = new RecipeExtractor([plugin], scraperName);
+		await expect(
+			extractor.extract("title", () => {
+				throw new RangeError("out of range");
+			}),
+		).rejects.toThrow(ExtractorNotFoundException);
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('Unexpected error in site extractor for "title"'),
+			expect.any(RangeError),
+		);
+
+		warnSpy.mockRestore();
 	});
 });
