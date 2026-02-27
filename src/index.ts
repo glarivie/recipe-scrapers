@@ -1,14 +1,31 @@
 import { scrapers } from "./scrapers/_index";
 import { getHostName } from "./utils";
 
-export * from "~/schemas/recipe.schema";
-export * from "~/types/recipe.interface";
-export * from "~/types/scraper.interface";
-
-export * from "./abstract-extractor-plugin";
-export * from "./abstract-postprocessor-plugin";
-export * from "./logger";
+// Public API
 export { scrapers };
+
+// Schema & validation
+export { RECIPE_SCHEMA_VERSION, RecipeObjectSchema } from "~/schemas/recipe.schema";
+// Types
+export type {
+	IngredientGroup,
+	IngredientItem,
+	Ingredients,
+	InstructionGroup,
+	InstructionItem,
+	Instructions,
+	Link,
+	RecipeData,
+	RecipeFields,
+	RecipeObject,
+} from "~/types/recipe.interface";
+export type { ScraperOptions } from "~/types/scraper.interface";
+
+export { ExtractorPlugin } from "./abstract-extractor-plugin";
+export { PostProcessorPlugin } from "./abstract-postprocessor-plugin";
+// Extension points
+export { AbstractScraper } from "./abstract-scraper";
+export { LogLevel } from "./logger";
 
 /**
  * Returns a scraper class for the given URL, if implemented.
