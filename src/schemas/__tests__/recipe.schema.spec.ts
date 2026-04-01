@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type { RecipeObject } from "~/types/recipe.interface";
 
+import { vString } from "../common.schema";
 import {
 	IngredientGroupSchema,
 	IngredientItemSchema,
@@ -538,6 +539,24 @@ describe("RecipeObjectSchema", () => {
 			links: [{ href: "not-a-url", text: "Invalid" }],
 		};
 		expect(() => v.parse(RecipeObjectSchema, recipe)).toThrow();
+	});
+});
+
+describe("vString", () => {
+	it("should show correct max length in error message when using default", () => {
+		const schema = vString("Test");
+		const longString = "a".repeat(6000);
+		expect(() => v.parse(schema, longString)).toThrow(
+			"Test must be less than 5000 characters",
+		);
+	});
+
+	it("should show correct max length in error message when max is specified", () => {
+		const schema = vString("Title", { max: 500 });
+		const longString = "a".repeat(501);
+		expect(() => v.parse(schema, longString)).toThrow(
+			"Title must be less than 500 characters",
+		);
 	});
 });
 
